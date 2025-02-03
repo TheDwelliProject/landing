@@ -1,11 +1,11 @@
 import dwelliLogo from "../assets//images/dwelli_logo.svg";
 export default function NavBar() {
   return (
-    <nav className="items-center justify-between py-8 text-zinc-700 sm:flex">
-      <a href="#">
-        <img src={dwelliLogo} alt="" />
+    <nav className="flex w-full items-center justify-between px-4 py-8 text-zinc-700">
+      <a href="#" className="h-6">
+        <img src={dwelliLogo} className="h-6" alt="" />
       </a>
-      <div className="sm:flex">
+      <div className="flex">
         <a
           href="#"
           className="rounded-full px-4 py-2 hover:bg-zinc-900 hover:text-white"

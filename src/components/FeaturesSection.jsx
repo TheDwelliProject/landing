@@ -4,15 +4,15 @@ import issuesImage from "../assets/images/issues.svg";
 
 export default function FeaturesSection() {
   return (
-    <div className="flex w-full flex-col items-center py-56">
+    <div className="flex w-full flex-col items-center py-48">
       {/* For Landlords */}
-      <div className="flex flex-col items-center gap-4 text-center">
+      <div className="flex w-5/6 flex-col items-center gap-4 text-center">
         <h2 className="text-4xl tracking-tight text-zinc-800">
           For Landlords & Property Managers
         </h2>
         <p className="text-zinc-500">Help me here</p>
-        <div className="mt-16 columns-3 gap-8 text-left">
-          <div className="break-after-column rounded-2xl bg-zinc-100 p-12">
+        <div className="mt-16 flex flex-col gap-8 text-left sm:flex-row">
+          <div className="break-after-column rounded-2xl bg-zinc-50 p-12">
             <img
               src={rentImage}
               alt="Automated Rent Collection"
@@ -26,7 +26,7 @@ export default function FeaturesSection() {
               rent.
             </p>
           </div>
-          <div className="break-after-column rounded-2xl bg-zinc-100 p-12">
+          <div className="break-after-column rounded-2xl bg-zinc-50 p-12">
             <img
               src={utilityImage}
               alt="Automated Rent Collection"
@@ -40,7 +40,7 @@ export default function FeaturesSection() {
               phone calls.
             </p>
           </div>
-          <div className="break-after-column rounded-2xl bg-zinc-100 p-12">
+          <div className="break-after-column rounded-2xl bg-zinc-50 p-12">
             <img
               src={issuesImage}
               alt="Automated Rent Collection"
@@ -56,11 +56,11 @@ export default function FeaturesSection() {
         </div>
       </div>
       {/* For Renters*/}
-      <div className="mt-48 flex flex-col items-center gap-4 text-center">
+      <div className="mt-16 flex w-5/6 flex-col items-center gap-4 text-center">
         <h2 className="text-4xl tracking-tight text-zinc-800">For Renters</h2>
         <p className="text-zinc-500">Help me here</p>
-        <div className="mt-16 columns-3 gap-8 text-left">
-          <div className="break-after-column rounded-2xl bg-zinc-100 p-12">
+        <div className="mt-16 flex flex-col gap-8 text-left sm:flex-row">
+          <div className="break-after-column rounded-2xl bg-zinc-50 p-12">
             <img
               src={rentImage}
               alt="Automated Rent Collection"
@@ -74,7 +74,7 @@ export default function FeaturesSection() {
               rent.
             </p>
           </div>
-          <div className="break-after-column rounded-2xl bg-zinc-100 p-12">
+          <div className="break-after-column rounded-2xl bg-zinc-50 p-12">
             <img
               src={utilityImage}
               alt="Automated Rent Collection"
@@ -88,7 +88,7 @@ export default function FeaturesSection() {
               phone calls.
             </p>
           </div>
-          <div className="break-after-column rounded-2xl bg-zinc-100 p-12">
+          <div className="break-after-column rounded-2xl bg-zinc-50 p-12">
             <img
               src={issuesImage}
               alt="Automated Rent Collection"

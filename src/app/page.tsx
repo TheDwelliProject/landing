@@ -1,10 +1,9 @@
 import NavBar from "./components/NavBar";
-import "./App.css";
 import HeaderSection from "./components/HeaderSection";
 import FeaturesSection from "./components/FeaturesSection";
 import FAQ from "./components/FAQ";
 
-function App() {
+export default function Home() {
   return (
     <div className="m-auto sm:max-w-7xl">
       <NavBar />
@@ -14,5 +13,3 @@ function App() {
     </div>
   );
 }
-
-export default App;

@@ -1,9 +1,16 @@
-import dwelliLogo from "../assets//images/dwelli_logo.svg";
+// import dwelliLogo from "./images/dwelli_logo.svg";
+import Image from "next/image";
 export default function NavBar() {
   return (
     <nav className="flex w-full items-center justify-between px-4 py-8 text-zinc-700">
       <a href="#" className="h-6">
-        <img src={dwelliLogo} className="h-6" alt="" />
+        <Image
+          src="/images/dwelli_logo.svg"
+          width={64}
+          height={24}
+          className="w-auto h-6"
+          alt=""
+        />
       </a>
       <div className="flex">
         <a

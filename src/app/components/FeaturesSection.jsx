@@ -1,6 +1,7 @@
-import rentImage from "../assets/images/rent.svg";
-import utilityImage from "../assets/images/utility.svg";
-import issuesImage from "../assets/images/issues.svg";
+import Image from "next/image";
+// import rentImage from "/images/rent.svg";
+// import utilityImage from "/images/utility.svg";
+// import issuesImage from "/images/issues.svg";
 
 export default function FeaturesSection() {
   return (
@@ -13,8 +14,10 @@ export default function FeaturesSection() {
         <p className="text-zinc-500">Help me here</p>
         <div className="mt-16 flex flex-col gap-8 text-left sm:flex-row">
           <div className="break-after-column rounded-2xl bg-zinc-50 p-12">
-            <img
-              src={rentImage}
+            <Image
+              width={500}
+              height={500}
+              src="/images/rent.svg"
               alt="Automated Rent Collection"
               className="mb-4 aspect-square w-full object-contain"
             />
@@ -27,8 +30,10 @@ export default function FeaturesSection() {
             </p>
           </div>
           <div className="break-after-column rounded-2xl bg-zinc-50 p-12">
-            <img
-              src={utilityImage}
+            <Image
+              width={500}
+              height={500}
+              src="/images/utility.svg"
               alt="Automated Rent Collection"
               className="mb-4 aspect-square w-full object-contain"
             />
@@ -41,8 +46,10 @@ export default function FeaturesSection() {
             </p>
           </div>
           <div className="break-after-column rounded-2xl bg-zinc-50 p-12">
-            <img
-              src={issuesImage}
+            <Image
+              width={500}
+              height={500}
+              src="/images/issues.svg"
               alt="Automated Rent Collection"
               className="mb-4 aspect-square w-full object-contain"
             />
@@ -61,8 +68,10 @@ export default function FeaturesSection() {
         <p className="text-zinc-500">Help me here</p>
         <div className="mt-16 flex flex-col gap-8 text-left sm:flex-row">
           <div className="break-after-column rounded-2xl bg-zinc-50 p-12">
-            <img
-              src={rentImage}
+            <Image
+              width={500}
+              height={500}
+              src="/images/rent.svg"
               alt="Automated Rent Collection"
               className="mb-4 aspect-square w-full object-contain"
             />
@@ -75,8 +84,10 @@ export default function FeaturesSection() {
             </p>
           </div>
           <div className="break-after-column rounded-2xl bg-zinc-50 p-12">
-            <img
-              src={utilityImage}
+            <Image
+              width={500}
+              height={500}
+              src="/images/utility.svg"
               alt="Automated Rent Collection"
               className="mb-4 aspect-square w-full object-contain"
             />
@@ -89,8 +100,10 @@ export default function FeaturesSection() {
             </p>
           </div>
           <div className="break-after-column rounded-2xl bg-zinc-50 p-12">
-            <img
-              src={issuesImage}
+            <Image
+              width={500}
+              height={500}
+              src="/images/issues.svg"
               alt="Automated Rent Collection"
               className="mb-4 aspect-square w-full object-contain"
             />

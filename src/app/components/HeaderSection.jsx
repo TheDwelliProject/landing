@@ -1,11 +1,18 @@
-import dwelliLogoIcon from "../assets/images/dwelli_logo-icon.svg";
+// import dwelliLogoIcon from "../assets/images/dwelli_logo-icon.svg";
+import Image from "next/image";
 import LinkButton from "./LinkButton";
 
 export default function HeaderSection() {
   return (
     <div className="flex w-full flex-col items-center py-24">
       <div className="flex flex-col items-center gap-4 text-center">
-        <img src={dwelliLogoIcon} className="w-32" alt="" />
+        <Image
+          src="images/dwelli_logo-icon.svg"
+          width={64}
+          height={64}
+          className="w-32"
+          alt=""
+        />
         <h1 className="text-6xl font-semibold tracking-tight text-zinc-800">
           Power up <br />
           your homes

@@ -1,14 +1,18 @@
+"use client";
+import Image from "next/image";
 import { useState } from "react";
 import PropTypes from "prop-types";
-import plusIcon from "../assets/images/plus-icon.svg";
+// import plusIcon from "/plus-icon.svg";
 
 const FAQItem = ({ question, answer, isOpen, onClick }) => (
   <div
     className="flex w-full cursor-pointer flex-row gap-2 border-b border-zinc-100 py-4"
     onClick={onClick}
   >
-    <img
-      src={plusIcon}
+    <Image
+      src="/images/plus-icon.svg"
+      width={24}
+      height={24}
       className={`h-6 w-6 transform transition ${isOpen ? "rotate-45" : ""}`}
       alt=""
     />

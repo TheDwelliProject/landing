@@ -5,15 +5,15 @@ import Image from "next/image";
 
 export default function FeaturesSection() {
   return (
-    <div className="flex w-full flex-col items-center py-48">
+    <div className="flex w-full flex-col items-center py-16">
       {/* For Landlords */}
       <div className="flex w-5/6 flex-col items-center gap-4 text-center">
-        <h2 className="text-4xl tracking-tight text-zinc-800">
+        <h2 className="text-5xl tracking-tight text-zinc-800">
           For Landlords & Property Managers
         </h2>
         <p className="text-zinc-500">Help me here</p>
-        <div className="mt-16 flex flex-col gap-8 text-left sm:flex-row">
-          <div className="break-after-column rounded-2xl bg-zinc-50 p-12">
+        <div className="mt-16 sm:mt-48 flex flex-col gap-8 text-left sm:flex-row">
+          <div className="rounded-3xl bg-zinc-50 p-8 grow basis-0">
             <Image
               width={500}
               height={500}
@@ -21,7 +21,7 @@ export default function FeaturesSection() {
               alt="Automated Rent Collection"
               className="mb-4 aspect-square w-full object-contain"
             />
-            <h3 className="text-xl font-semibold text-zinc-800">
+            <h3 className="text-l font-semibold text-zinc-800">
               Automated Rent Collection
             </h3>
             <p className="text-zinc-500">
@@ -29,7 +29,7 @@ export default function FeaturesSection() {
               rent.
             </p>
           </div>
-          <div className="break-after-column rounded-2xl bg-zinc-50 p-12">
+          <div className="rounded-2xl bg-zinc-50 p-8 grow basis-0">
             <Image
               width={500}
               height={500}
@@ -37,7 +37,7 @@ export default function FeaturesSection() {
               alt="Automated Rent Collection"
               className="mb-4 aspect-square w-full object-contain"
             />
-            <h3 className="text-xl font-semibold text-zinc-800">
+            <h3 className="text-l font-semibold text-zinc-800">
               Maintenance Requests
             </h3>
             <p className="text-zinc-500">
@@ -45,7 +45,7 @@ export default function FeaturesSection() {
               phone calls.
             </p>
           </div>
-          <div className="break-after-column rounded-2xl bg-zinc-50 p-12">
+          <div className="rounded-2xl bg-zinc-50 p-8 grow basis-0">
             <Image
               width={500}
               height={500}
@@ -53,7 +53,7 @@ export default function FeaturesSection() {
               alt="Automated Rent Collection"
               className="mb-4 aspect-square w-full object-contain"
             />
-            <h3 className="text-xl font-semibold text-zinc-800">
+            <h3 className="text-l font-semibold text-zinc-800">
               Tenant Screening
             </h3>
             <p className="text-zinc-500">
@@ -63,11 +63,11 @@ export default function FeaturesSection() {
         </div>
       </div>
       {/* For Renters*/}
-      <div className="mt-16 flex w-5/6 flex-col items-center gap-4 text-center">
-        <h2 className="text-4xl tracking-tight text-zinc-800">For Renters</h2>
+      <div className="mt-24 sm:mt-48 flex w-5/6 flex-col items-center gap-4 text-center">
+        <h2 className="text-5xl tracking-tight text-zinc-800">For Renters</h2>
         <p className="text-zinc-500">Help me here</p>
         <div className="mt-16 flex flex-col gap-8 text-left sm:flex-row">
-          <div className="break-after-column rounded-2xl bg-zinc-50 p-12">
+          <div className="rounded-3xl bg-zinc-50 p-8 grow basis-0">
             <Image
               width={500}
               height={500}
@@ -75,15 +75,15 @@ export default function FeaturesSection() {
               alt="Automated Rent Collection"
               className="mb-4 aspect-square w-full object-contain"
             />
-            <h3 className="text-xl font-semibold text-zinc-800">
-              Automated Rent Collection
+            <h3 className="text-l font-semibold text-zinc-800">
+              Automated Rent Collectionss
             </h3>
             <p className="text-zinc-500">
               Get rent payments on time, every time. No more chasing tenants for
               rent.
             </p>
           </div>
-          <div className="break-after-column rounded-2xl bg-zinc-50 p-12">
+          <div className="rounded-2xl bg-zinc-50 p-8 grow basis-0">
             <Image
               width={500}
               height={500}
@@ -91,7 +91,7 @@ export default function FeaturesSection() {
               alt="Automated Rent Collection"
               className="mb-4 aspect-square w-full object-contain"
             />
-            <h3 className="text-xl font-semibold text-zinc-800">
+            <h3 className="text-l font-semibold text-zinc-800">
               Maintenance Requests
             </h3>
             <p className="text-zinc-500">
@@ -99,7 +99,7 @@ export default function FeaturesSection() {
               phone calls.
             </p>
           </div>
-          <div className="break-after-column rounded-2xl bg-zinc-50 p-12">
+          <div className="rounded-2xl bg-zinc-50 p-8 grow basis-0">
             <Image
               width={500}
               height={500}
@@ -107,7 +107,7 @@ export default function FeaturesSection() {
               alt="Automated Rent Collection"
               className="mb-4 aspect-square w-full object-contain"
             />
-            <h3 className="text-xl font-semibold text-zinc-800">
+            <h3 className="text-l font-semibold text-zinc-800">
               Tenant Screening
             </h3>
             <p className="text-zinc-500">

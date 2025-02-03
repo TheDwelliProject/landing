@@ -1,10 +1,15 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
-import PropTypes from "prop-types";
-// import plusIcon from "/plus-icon.svg";
 
-const FAQItem = ({ question, answer, isOpen, onClick }) => (
+interface FAQItemProps {
+  question: string;
+  answer: string;
+  isOpen: boolean;
+  onClick: () => void;
+}
+
+const FAQItem = ({ question, answer, isOpen, onClick }:FAQItemProps) => (
   <div
     className="flex w-full cursor-pointer flex-row gap-2 border-b border-zinc-100 py-4"
     onClick={onClick}
@@ -22,17 +27,11 @@ const FAQItem = ({ question, answer, isOpen, onClick }) => (
     </div>
   </div>
 );
-FAQItem.propTypes = {
-  question: PropTypes.string.isRequired,
-  answer: PropTypes.string.isRequired,
-  isOpen: PropTypes.bool.isRequired,
-  onClick: PropTypes.func.isRequired,
-};
 
 export default function FAQ() {
-  const [openIndex, setOpenIndex] = useState(null);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const handleClick = (index) => {
+  const handleClick = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
@@ -60,7 +59,7 @@ export default function FAQ() {
   ];
 
   return (
-    <div className="flex w-full flex-col items-center py-24">
+    <div className="flex w-full flex-col items-center py-12">
       <h2 className="text-4xl tracking-tight text-zinc-800">
         Common Questions
       </h2>

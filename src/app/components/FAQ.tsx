@@ -59,11 +59,11 @@ export default function FAQ() {
   ];
 
   return (
-    <div className="flex w-full flex-col items-center py-12">
+    <div className="flex w-full flex-col items-center py-12" id="faq">
       <h2 className="text-4xl tracking-tight text-zinc-800">
         Common Questions
       </h2>
-      <p className="mt-4 w-5/6 text-center tracking-tight text-zinc-500">
+      <p className="mt-4 w-5/6 sm:w-2/3 text-center tracking-tight text-zinc-500">
         We aim to address the most common questions you may have. However, if
         you have any further inquiries, please don’t hesitate to send us a
         message

@@ -14,19 +14,19 @@ export default function NavBar() {
       </a>
       <div className="flex">
         <a
-          href="#"
+          href="#residents"
           className="rounded-full px-4 py-2 hover:bg-zinc-900 hover:text-white"
         >
-          Landlords
+          Residents
         </a>
         <a
-          href="#"
+          href="#owners"
           className="rounded-full px-4 py-2 hover:bg-zinc-900 hover:text-white"
         >
-          Renters
+          Owners
         </a>
         <a
-          href="#"
+          href="#faq"
           className="rounded-full px-4 py-2 hover:bg-zinc-900 hover:text-white"
         >
           FAQs

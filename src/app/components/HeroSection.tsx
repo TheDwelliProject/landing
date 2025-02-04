@@ -5,7 +5,7 @@ export default function HeroSection() {
     <div className="flex w-full flex-col items-center pt-16 pb-36 px-8 bg-[url(/images/hero_bg.svg)] bg-contain bg-no-repeat bg-[center_bottom_1rem]">
       <div className="flex flex-col items-center gap-4 text-center sm:w-1/3">
        
-        <h1 className="text-7xl font-semibold tracking-tight text-zinc-800">
+        <h1 className="text-6xl sm:text-7xl font-semibold tracking-tight text-zinc-800">
           Power up your homes
         </h1>
         <p className="tracking-tight text-xl text-zinc-500">

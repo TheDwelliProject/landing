@@ -4,7 +4,7 @@ import "./globals.css";
 
 
 export const metadata: Metadata = {
-  title: "Dwell Home",
+  title: "Dwelli Home",
   description: "The best way to manage your home",
 };
 

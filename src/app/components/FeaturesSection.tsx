@@ -1,7 +1,7 @@
 import Image from "next/image";
 export default function FeaturesSection() {
   return (
-    <div className="flex w-full flex-col items-center py-16" id="residents">
+    <div className="flex w-full flex-col items-center py-16 animate-page-appear" id="residents">
       {/* For Owners */}
       <div className="flex w-5/6 flex-col items-center gap-4 text-center">
         <h2 className="text-5xl tracking-tight text-zinc-800">

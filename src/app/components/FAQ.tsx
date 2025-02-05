@@ -23,7 +23,7 @@ const FAQItem = ({ question, answer, isOpen, onClick }:FAQItemProps) => (
     />
     <div className="flex w-full flex-col">
       <h3 className="text-lg tracking-tight text-zinc-800">{question}</h3>
-      {isOpen && <p className="mt-4 tracking-tight text-zinc-500">{answer}</p>}
+      {isOpen && <p className="mt-4 tracking-tight text-zinc-500 animate-appear">{answer}</p>}
     </div>
   </div>
 );
@@ -81,8 +81,8 @@ export default function FAQ() {
         ))}
       </div>
 
-      <p className="text-brand mt-8 text-sm tracking-tight">
-        Have more questions? Send us an email
+        <p className="text-brand mt-8 text-sm tracking-tight">
+        Have more questions? <a href="#" className="underline underline-offset-8">Send us an email</a> 
       </p>
     </div>
   );

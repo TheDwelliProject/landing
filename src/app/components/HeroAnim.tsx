@@ -12,6 +12,6 @@ export default function HeroAnim() {
   });
 
   return (
-    <RiveComponent className='w-full sm:w-3/4 h-full absolute sm:-bottom-24 -bottom-48 -z-0' />
+    <RiveComponent className='w-full sm:w-3/4 h-full absolute sm:-bottom-24 -bottom-24 -z-0' />
   );
 }

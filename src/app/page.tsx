@@ -5,13 +5,13 @@ import FAQ from "./components/FAQ";
 import MainFooter from "./components/MainFooter";
 
 export default function Home() {
-  return (
-    <div className="m-auto sm:max-w-7xl">
-      <NavBar />
-      <HeroSection />
-      <FeaturesSection />
-      <FAQ />
-      <MainFooter />
-    </div>
-  );
+	return (
+		<div className="m-auto sm:max-w-7xl">
+			<NavBar />
+			<HeroSection />
+			<FeaturesSection />
+			<FAQ />
+			<MainFooter />
+		</div>
+	);
 }

@@ -5,7 +5,7 @@ export default function HeroAnim() {
     src:"/dwelli_flower.riv",
     stateMachines: "State Machine 1",
     layout: new Layout({
-      fit: Fit.Contain, // Change to: rive.Fit.Contain, or Cover
+      fit: Fit.Contain, // Change to: Fit.Width, or Cover
       alignment: Alignment.Center,
     }),
     autoplay: true,

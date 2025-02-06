@@ -2,7 +2,7 @@ import Image from "next/image";
 export default function FeaturesSection() {
 	return (
 		<div
-			className="flex w-full flex-col items-center py-16 animate-page-appear"
+			className="flex w-full flex-col items-center py-16 animate-in slide-in-from-bottom-8 fade-in duration-700 fill-mode-both delay-1500"
 			id="residents"
 		>
 			<div className="flex w-5/6 flex-col items-center gap-4 text-center">

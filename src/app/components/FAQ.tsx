@@ -25,11 +25,17 @@ const FAQItem = ({ question, answer, isOpen, onClick }: FAQItemProps) => (
 		/>
 		<div className="flex w-full flex-col">
 			<h3 className="text-lg tracking-tight text-zinc-800">{question}</h3>
-			{isOpen && (
-				<p className="mt-4 tracking-tight text-zinc-500 animate-appear">
-					{answer}
-				</p>
-			)}
+			<div
+				className={`w-full overflow-clip transition-all duration-1000 transition-discrete  ${
+					isOpen ? "max-h-24" : "max-h-0"
+				}`}
+			>
+				{isOpen && (
+					<p className="py-2 tracking-tight text-zinc-500 ">
+						{answer}
+					</p>
+				)}
+			</div>
 		</div>
 	</div>
 );
@@ -83,7 +89,7 @@ export default function FAQ() {
 				))}
 			</div>
 
-			<p className="text-brand mt-8 text-sm tracking-tight">
+			<p className="text-brand mt-8 tracking-tight">
 				Have more questions?{" "}
 				<a href="#" className="underline underline-offset-8">
 					Send us an email

@@ -26,7 +26,7 @@ const FAQItem = ({ question, answer, isOpen, onClick }: FAQItemProps) => (
 		<div className="flex w-full flex-col">
 			<h3 className="text-lg tracking-tight text-zinc-800">{question}</h3>
 			<div
-				className={`w-full overflow-clip transition-all duration-1000 transition-discrete  ${
+				className={`w-full overflow-clip transition-all duration-300 transition-discrete  ${
 					isOpen ? "max-h-24" : "max-h-0"
 				}`}
 			>

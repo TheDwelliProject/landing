@@ -6,7 +6,7 @@ export default function HeroSection() {
 	return (
 		<div className="flex w-full flex-col items-center pt-16 pb-36 px-8 bg-contain bg-no-repeat bg-[center_bottom_1rem] relative">
 			<HeroAnim />
-			<div className="flex flex-col items-center gap-4 text-center sm:w-1/3 z-10">
+			<div className="flex flex-col items-center gap-6 text-center sm:w-1/3 z-10">
 				<h1 className="text-6xl sm:text-7xl font-semibold tracking-tight text-zinc-800 animate-in slide-in-from-bottom-4 fade-in duration-700 fill-mode-both delay-300">
 					Power up your homes
 				</h1>

@@ -1,6 +1,6 @@
 export default function MainFooter() {
 	return (
-		<footer className="flex w-full flex-col sm:flex-row items-center justify-between px-4 py-8 text-zinc-500">
+		<footer className="flex w-full flex-col sm:flex-row items-start justify-between px-4 py-8 text-zinc-500">
 			<div className="flex flex-col sm:flex-row gap-4 items-center">
 				<svg
 					width="32"
@@ -39,10 +39,13 @@ export default function MainFooter() {
 					</a>
 				</div>
 			</div>
-			<div className="py-4">
+			<div className="py-4 flex items-end flex-col">
 				<p className="text-center text-zinc-500">
 					&copy; 2025 Dwelli Technologies Limited. All rights
 					reserved.
+				</p>
+				<p className="text-sm text-zinc-400">
+					38 Baale Bus Stop, Ipaja, Lagos, Nigeria | +234 123 456 7890
 				</p>
 			</div>
 		</footer>

@@ -45,7 +45,7 @@ export default function MainFooter() {
 					reserved.
 				</p>
 				<p className="text-sm text-zinc-400">
-					38 Baale Bus Stop, Ipaja, Lagos, Nigeria | +234 123 456 7890
+					38 Baale Bus Stop, Ipaja, Lagos, Nigeria | +234 810 164 4645
 				</p>
 			</div>
 		</footer>

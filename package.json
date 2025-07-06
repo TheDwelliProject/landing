@@ -9,7 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.4",
+    "@next/env": "^15.3.5",
     "@rive-app/react-canvas": "^4.17.10",
+    "airtable": "^0.12.2",
+    "classnames": "^2.5.1",
     "next": "15.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

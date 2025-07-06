@@ -1,1 +1,6 @@
 export NODE_ENV=development
+
+# Airtable Configuration
+export AIRTABLE_API_KEY=your_airtable_api_key_here
+export AIRTABLE_BASE_ID=appwempMB2Xbq6VHS
+export AIRTABLE_TABLE_NAME=your_table_name_here

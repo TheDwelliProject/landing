@@ -136,7 +136,7 @@ export default function SignupForm({ onSuccess }: SignupFormProps) {
 					/>
 				</div>
 
-				<div className="flex gap-2">
+				<div className="flex gap-2 mt-8">
 					<Button
 						type="submit"
 						className="flex-1 rounded-md"

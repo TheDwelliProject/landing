@@ -1,8 +1,10 @@
 import Image from "next/image";
+import Link from "next/link";
+
 export default function NavBar() {
 	return (
 		<nav className="flex w-full items-center justify-around sm:justify-between px-4 py-8 text-zinc-700 animate-in fade-in delay-300 duration-700 fill-mode-both">
-			<a href="#" className="h-6">
+			<Link href="/">
 				<Image
 					src="/images/dwelli_logo.svg"
 					width={64}
@@ -10,7 +12,7 @@ export default function NavBar() {
 					className="w-auto h-6"
 					alt=""
 				/>
-			</a>
+			</Link>
 			<div className="sm:flex hidden">
 				<a
 					href="#residents"

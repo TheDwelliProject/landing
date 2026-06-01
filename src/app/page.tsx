@@ -1,5 +1,9 @@
 import Image from "next/image";
 import FAQ from "@/components/faq";
+import Navbar from "@/components/navbar";
+import Flower from "@/components/flower";
+import ArrowCircle from "@/components/arrow-circle";
+import { Keyhole } from "@/components/keyhole";
 
 function DwelliLogoLight({ className = "" }: { className?: string }) {
   return (
@@ -8,133 +12,52 @@ function DwelliLogoLight({ className = "" }: { className?: string }) {
       alt="dwelli"
       width={120}
       height={32}
+      style={{ width: "auto", height: "auto" }}
       className={className}
     />
-  );
-}
-
-/** A scalloped 12-petal "flower" decoration used in the brutalist-playful design. */
-function Flower({ className = "", color = "currentColor" }: { className?: string; color?: string }) {
-  // 12 evenly distributed circular "petals" arranged around a center circle.
-  const petals = Array.from({ length: 12 }, (_, i) => {
-    const angle = (i / 12) * Math.PI * 2;
-    const r = 38;
-    const cx = 60 + Math.cos(angle) * r;
-    const cy = 60 + Math.sin(angle) * r;
-    return <circle key={i} cx={cx} cy={cy} r={18} fill={color} />;
-  });
-  return (
-    <svg
-      viewBox="0 0 120 120"
-      className={className}
-      aria-hidden="true"
-    >
-      {petals}
-      <circle cx={60} cy={60} r={28} fill={color} />
-    </svg>
-  );
-}
-
-function ArrowCircle({
-  className = "",
-  bg = "bg-white/15",
-  text = "text-white",
-}: {
-  className?: string;
-  bg?: string;
-  text?: string;
-}) {
-  return (
-    <span
-      className={`inline-flex items-center justify-center w-10 h-10 rounded-full ${bg} ${text} ${className}`}
-      aria-hidden="true"
-    >
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-        <path
-          d="M2 7h10M8 3l4 4-4 4"
-          stroke="currentColor"
-          strokeWidth="1.6"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </span>
   );
 }
 
 export default function Home() {
   return (
     <div className="min-h-screen">
-      {/* ── Nav ── (full-width black pill on cream) */}
-      <div className="bg-cream pt-4 sm:pt-6">
-        <nav className="flex items-center justify-between bg-charcoal text-white rounded-full pl-3 sm:pl-4 pr-1.5 py-1.5">
-          <Image
-            src="/logos/logo-dark-keyhole-wordmark.png"
-            alt="dwelli"
-            width={120}
-            height={32}
-          />
-          <div className="hidden sm:flex items-center gap-8 text-sm">
-            <a href="#residents" className="text-white/80 hover:text-white">
-              Residents
-            </a>
-            <a href="#owners" className="text-white/80 hover:text-white">
-              Owners
-            </a>
-            <a href="#faq" className="text-white/80 hover:text-white">
-              FAQ
-            </a>
-          </div>
-          <div className="flex items-center gap-2">
-            <a
-              href="#signup"
-              className="bg-orange text-white px-4 sm:px-5 py-2.5 rounded-full text-sm font-medium hover:bg-orange/90 transition-colors"
-            >
-              Sign up
-            </a>
-            <button
-              type="button"
-              aria-label="Menu"
-              className="sm:hidden w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white"
-            >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path
-                  d="M2 5h12M2 11h12"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </button>
-          </div>
-        </nav>
-      </div>
+      <Navbar />
 
       {/* ── Hero ── */}
-      <section className="relative bg-orange text-white px-6 sm:px-10 lg:px-16 pt-12 sm:pt-20 pb-20 sm:pb-32 overflow-hidden">
+      <section className="relative bg-orange text-white pt-8 sm:pt-14 pb-14 sm:pb-20 overflow-hidden rounded-3xl mt-4">
         {/* Decorative flower */}
         <Flower
           color="#FF7A2E"
-          className="absolute top-6 right-6 sm:top-12 sm:right-12 w-28 h-28 sm:w-40 sm:h-40 opacity-90 pointer-events-none"
+          className="absolute top-6 right-6 sm:top-[-3rem] sm:right w-48 h-28 sm:w-40 sm:h-40 opacity-90 pointer-events-none"
         />
 
-        <div className="max-w-7xl mx-auto relative">
+        <Flower
+          color="#FF7A2E"
+          className="absolute top-6 right-6 sm:bottom-[-3rem] sm:right w-48 h-28 sm:w-40 sm:h-40 opacity-90 pointer-events-none"
+        />
+
+        <div className="max-w-7xl px-16 relative">
           <div className="mb-8">
             <span className="inline-flex items-center gap-2 text-[11px] tracking-[0.14em] uppercase text-white/80 font-mono">
-              <span className="w-1.5 h-1.5 rounded-full bg-white inline-block" />
-              Now in private beta &middot; Lagos
+              <span className="w-1.5 h-1.5 rounded-full bg-green inline-block" />
+              Now in private beta
             </span>
           </div>
 
-          <h1 className="text-[clamp(3rem,12vw,12rem)] leading-[0.85] font-medium tracking-[-0.05em] max-w-[1100px] mb-10 sm:mb-16">
-            Run your
-            <br />
-            building.
-            <br />
-            <span className="font-serif italic font-normal tracking-[-0.025em]">
-              Live in it.
-            </span>
-          </h1>
+          <div className="relative mb-10 sm:mb-16">
+            <h1 className="text-[clamp(3rem,12vw,12rem)] leading-[0.85] font-medium tracking-[-0.05em] max-w-[1100px]">
+              Run your
+              <br />
+              building.
+              <br />
+              <span className="font-serif italic font-normal tracking-[-0.025em]">
+                Live in it.
+              </span>
+            </h1>
+            <div className="absolute right-0 bottom-0 w-24 h-36 sm:w-32 sm:h-48 pointer-events-none">
+              <Keyhole />
+            </div>
+          </div>
 
           <div className="grid sm:grid-cols-2 gap-12 max-w-3xl">
             <p className="text-[clamp(1.1rem,2.5vw,1.375rem)] leading-relaxed text-white/90 max-w-[560px]">
@@ -142,34 +65,13 @@ export default function Home() {
               manager, gateman. Rent, access, repairs, utilities.{" "}
               <strong className="font-semibold text-white">Settled.</strong>
             </p>
-
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center bg-white rounded-full p-1.5 gap-1 w-full max-w-md">
-                <input
-                  type="email"
-                  placeholder="you@home.com"
-                  className="flex-1 bg-transparent outline-none text-charcoal placeholder:text-charcoal/40 px-3 sm:px-4 py-2 text-sm min-w-0"
-                />
-                <a
-                  href="#signup"
-                  className="bg-charcoal text-white px-4 sm:px-5 py-2.5 rounded-full text-sm font-medium hover:bg-charcoal/90 transition-colors whitespace-nowrap shrink-0"
-                >
-                  <span className="hidden sm:inline">Get on the list</span>
-                  <span className="sm:hidden">Get on list</span>{" "}
-                  &rarr;
-                </a>
-              </div>
-              <span className="text-[11px] tracking-[0.14em] uppercase text-white/70 font-mono">
-                Free for residents &middot; &#8358;2,500/unit for owners
-              </span>
-            </div>
           </div>
         </div>
       </section>
 
       {/* ── 01 Capabilities ── */}
-      <section className="bg-cream text-charcoal px-6 sm:px-10 lg:px-16 py-16 sm:py-24">
-        <div className="max-w-7xl mx-auto">
+      <section className="bg-cream text-charcoal px-6 sm:px-10 lg:px-16 py-16 sm:py-2 mt-8">
+        <div>
           <div className="flex items-baseline justify-between mb-8 sm:mb-12 text-[11px] tracking-[0.14em] uppercase font-mono text-charcoal/55">
             <span>// 01 — Capabilities</span>
             <span className="hidden sm:inline">4 ways Dwelli helps</span>
@@ -387,7 +289,7 @@ export default function Home() {
         id="residents"
         className="bg-cream-light text-charcoal px-6 sm:px-10 lg:px-16 py-16 sm:py-24"
       >
-        <div className="max-w-7xl mx-auto">
+        <div>
           <div className="flex items-baseline justify-between mb-8 sm:mb-12 text-[11px] tracking-[0.14em] uppercase font-mono text-charcoal/55">
             <span>// 02 — For residents</span>
             <span className="hidden sm:inline">Free, forever</span>
@@ -447,20 +349,20 @@ export default function Home() {
       {/* ── 03 For Owners ── */}
       <section
         id="owners"
-        className="relative bg-charcoal text-white px-6 sm:px-10 lg:px-16 py-16 sm:py-24 overflow-hidden"
+        className="relative bg-charcoal text-white px-6 sm:px-10 lg:px-16 py-16 sm:py-24 overflow-hidden rounded-3xl"
       >
         {/* Pink decorative flower */}
         <Flower
-          color="#D0318D"
+          color="#FF7A2E"
           className="absolute top-8 right-8 sm:top-14 sm:right-14 w-20 h-20 sm:w-28 sm:h-28 opacity-95 pointer-events-none"
         />
 
-        <div className="max-w-7xl mx-auto relative">
+        <div className="relative">
           <div className="flex items-baseline justify-between mb-8 sm:mb-12 text-[11px] tracking-[0.14em] uppercase font-mono text-white/55">
             <span>// 03 — For owners &amp; managers</span>
-            <span className="hidden sm:inline pr-32">
+            {/*<span className="hidden sm:inline pr-32">
               &#8358;2,500 &middot; per unit &middot; per month
-            </span>
+            </span>*/}
           </div>
 
           <h2 className="text-[clamp(2.75rem,9vw,7rem)] leading-[0.92] font-medium tracking-tight mb-12 sm:mb-16 max-w-4xl">
@@ -742,7 +644,12 @@ export default function Home() {
       <footer className="bg-charcoal text-white px-6 sm:px-10 lg:px-16 py-12 sm:py-16">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-8 mb-12">
-            <DwelliLogoLight />
+            <Image
+              src="/logos/logo-dark-keyhole-wordmark.png"
+              alt="dwelli"
+              width={96}
+              height={12}
+            />
 
             <div className="flex flex-wrap gap-x-8 gap-y-3 text-sm text-white/55">
               <a href="#residents" className="hover:text-white">
@@ -766,7 +673,7 @@ export default function Home() {
           <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-xs text-white/40">
             <span>&copy; 2026 Dwelli Technologies Ltd.</span>
             <span>
-              38 Baale Bus Stop, Ipaja, Lagos &middot; +234 810 164 4645
+              25 Taiye Olowu street, Lekki, Lagos &middot; <a href="tel:+2348091555588">+234 809 1555 588</a>
             </span>
           </div>
         </div>

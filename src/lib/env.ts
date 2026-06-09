@@ -9,6 +9,10 @@ function required(name: string): string {
 }
 
 export const env = {
-  DWELLI_API_URL: required("DWELLI_API_URL"),
-  AUTH_COOKIE_SECURE: process.env.AUTH_COOKIE_SECURE !== "false",
+  get DWELLI_API_URL(): string {
+    return required("DWELLI_API_URL");
+  },
+  get AUTH_COOKIE_SECURE(): boolean {
+    return process.env.AUTH_COOKIE_SECURE !== "false";
+  },
 };

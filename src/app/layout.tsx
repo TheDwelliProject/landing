@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Instrument_Serif,
+  Bricolage_Grotesque,
+} from "next/font/google";
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,10 +25,16 @@ const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
 });
 
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
+  weight: ["400", "500", "600", "700", "800"],
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
-  title: "Dwelli — Run your building. Live in it.",
+  title: "Dwelli — Run a building, not a war room.",
   description:
-    "One app for everyone with a key — landlord, tenant, manager, gateman. Rent, access, repairs, utilities. Settled.",
+    "Rent, maintenance, visitor passes and payouts — every unit in one place. List your property and invite residents in minutes.",
 };
 
 export const viewport = {
@@ -38,9 +50,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} antialiased font-sans p-4`}
+        className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} ${bricolage.variable} antialiased font-sans`}
       >
         {children}
+        <Toaster />
       </body>
     </html>
   );

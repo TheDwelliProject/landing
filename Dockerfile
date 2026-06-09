@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.7
 
 # Dependencies stage
-FROM node:24-alpine AS deps
+FROM node:24.14.1-alpine AS deps
 WORKDIR /app
 
 RUN corepack enable
@@ -10,7 +10,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 
 # Build stage
-FROM node:24-alpine AS builder
+FROM node:24.14.1-alpine AS builder
 WORKDIR /app
 
 RUN corepack enable
@@ -22,7 +22,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN pnpm run build
 
 # Runtime stage
-FROM node:24-alpine AS runner
+FROM node:24.14.1-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production

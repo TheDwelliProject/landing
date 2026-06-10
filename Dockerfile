@@ -37,7 +37,7 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=dwelli:dwelli /app/.next/standalone ./
 COPY --from=builder --chown=dwelli:dwelli /app/.next/static ./.next/static
 
-USER nextjs
+USER dwelli
 
 EXPOSE 3000
 

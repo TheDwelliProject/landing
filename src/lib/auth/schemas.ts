@@ -20,6 +20,18 @@ export type OtpInput = z.infer<typeof otpSchema>;
 export const requestOtpBodySchema = phoneSchema;
 export type RequestOtpBody = z.infer<typeof requestOtpBodySchema>;
 
+export const profileSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(2, "Please enter your full name")
+    .max(120, "That name looks a little long"),
+});
+export type ProfileInput = z.infer<typeof profileSchema>;
+
+export const updateMeBodySchema = profileSchema;
+export type UpdateMeBody = z.infer<typeof updateMeBodySchema>;
+
 export const verifyBodySchema = z.object({
   phone: z
     .string()

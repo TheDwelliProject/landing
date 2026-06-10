@@ -1,11 +1,24 @@
 export class ApiError extends Error {
   readonly code: string;
   readonly status: number;
-  constructor(code: string, status: number, message: string) {
+  /** Structured error details forwarded from the backend (e.g. retry timing on 429s). */
+  readonly data?: unknown;
+  constructor(code: string, status: number, message: string, data?: unknown) {
     super(message);
     this.name = "ApiError";
     this.code = code;
     this.status = status;
+    this.data = data;
+  }
+
+  /** Seconds until the tripped rate-limit window clears. Always present on 429s. */
+  get retryAfterSeconds(): number | undefined {
+    if (typeof this.data !== "object" || this.data === null) return undefined;
+    const value = (this.data as { retry_after_seconds?: unknown })
+      .retry_after_seconds;
+    return typeof value === "number" && Number.isFinite(value) && value > 0
+      ? value
+      : undefined;
   }
 }
 
@@ -19,7 +32,7 @@ export class NetworkError extends Error {
 
 type JSendBody =
   | { status: "success"; data: unknown }
-  | { status: "error"; code: string; message: string };
+  | { status: "error"; code: string; message: string; data?: unknown };
 
 type RefreshResult = { ok: true } | { ok: false; code?: string };
 
@@ -81,7 +94,7 @@ async function readJSend(res: Response): Promise<JSendBody | undefined> {
 
 function bodyToError(body: JSendBody | undefined, status: number): ApiError {
   if (body && body.status === "error") {
-    return new ApiError(body.code, status, body.message);
+    return new ApiError(body.code, status, body.message, body.data);
   }
   return new ApiError("internal_error", status, "Unexpected server response");
 }

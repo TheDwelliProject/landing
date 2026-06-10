@@ -44,7 +44,7 @@ export function mapError(
       return inlineOrToast(firstField, msg);
     }
     case "rate_limited":
-      return { kind: "toast", message: MSG_RATE };
+      return { kind: "toast", message: rateLimitMessage(err.retryAfterSeconds) };
     case "invalid_refresh_token":
     case "unauthorized":
       return { kind: "force-logout" };
@@ -55,6 +55,15 @@ export function mapError(
     default:
       return { kind: "toast", message: MSG_INTERNAL };
   }
+}
+
+function rateLimitMessage(retryAfterSeconds: number | undefined): string {
+  if (!retryAfterSeconds) return MSG_RATE;
+  if (retryAfterSeconds < 60) {
+    return `Too many requests. Try again in ${retryAfterSeconds} seconds.`;
+  }
+  const minutes = Math.ceil(retryAfterSeconds / 60);
+  return `Too many requests. Try again in ${minutes} minute${minutes === 1 ? "" : "s"}.`;
 }
 
 function inlineOrToast(

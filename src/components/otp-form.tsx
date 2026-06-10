@@ -59,6 +59,10 @@ export function OtpForm() {
   const [state, setState] = useState<OtpState>("entry");
   const [invalidAttempts, setInvalidAttempts] = useState(0);
   const [pauseSecondsLeft, setPauseSecondsLeft] = useState(0);
+  // Both /v1/auth/otp and /v1/auth/verify can 429; the copy differs.
+  const [rateLimitedBy, setRateLimitedBy] = useState<"request" | "verify">(
+    "request",
+  );
   const tickRef = useRef<number | null>(null);
   const redirectRef = useRef<number | null>(null);
   // Guards against the rare double-submit caused by input-otp's internal
@@ -148,7 +152,11 @@ export function OtpForm() {
         if (err instanceof ApiError && err.code === "invalid_otp") {
           const nextAttempts = invalidAttempts + 1;
           setInvalidAttempts(nextAttempts);
-          form.setValue("otp", "", { shouldValidate: true, shouldDirty: true });
+          form.setValue("otp", "", { shouldDirty: true });
+          // Re-validate the cleared field before setting the custom error —
+          // setValue's shouldValidate runs the resolver async, which would
+          // resolve after setError and clobber this message with the schema's.
+          await form.trigger("otp");
           if (nextAttempts >= TOO_MANY_TRIES_AFTER) {
             setState("too-many-tries");
             return;
@@ -159,6 +167,7 @@ export function OtpForm() {
           return;
         }
         if (err instanceof ApiError && err.code === "rate_limited") {
+          setRateLimitedBy("verify");
           setState("rate-limited");
           setPauseSecondsLeft(
             err.retryAfterSeconds ?? RATE_LIMIT_FALLBACK_SECONDS,
@@ -212,6 +221,7 @@ export function OtpForm() {
       toast.success("New code sent.");
     } catch (err) {
       if (err instanceof ApiError && err.code === "rate_limited") {
+        setRateLimitedBy("request");
         setState("rate-limited");
         setPauseSecondsLeft(
           err.retryAfterSeconds ?? RATE_LIMIT_FALLBACK_SECONDS,
@@ -313,8 +323,16 @@ export function OtpForm() {
             <OtpStatusPanel
               tone="amber"
               icon={<AlertTriangle className="h-4 w-4" aria-hidden="true" />}
-              title="Too many codes requested"
-              body={`We've sent several codes to this number recently. Try again in ${formatWait(pauseSecondsLeft)}.`}
+              title={
+                rateLimitedBy === "verify"
+                  ? "Too many attempts"
+                  : "Too many codes requested"
+              }
+              body={
+                rateLimitedBy === "verify"
+                  ? `Verification is temporarily paused. Try again in ${formatWait(pauseSecondsLeft)}.`
+                  : `We've sent several codes to this number recently. Try again in ${formatWait(pauseSecondsLeft)}.`
+              }
             />
           )}
 
@@ -394,12 +412,12 @@ function OtpStatusPanel({
       role="alert"
       className={`mt-5 flex gap-3 rounded-xl border px-4 py-4 ${classes}`}
     >
-      <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-current/20">
+      <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/10">
         {icon}
       </div>
       <div className="min-w-0 text-[14px] leading-[1.45]">
         <p className="font-semibold text-white">{title}</p>
-        <p className="mt-1 text-white/78">{body}</p>
+        <p className="mt-1 text-white/75">{body}</p>
       </div>
     </div>
   );
@@ -446,7 +464,10 @@ function VerifiedState({ otp }: { otp: string }) {
 }
 
 function formatWait(seconds: number): string {
-  if (seconds < 60) return `${Math.max(1, seconds)} seconds`;
+  if (seconds < 60) {
+    const s = Math.max(1, seconds);
+    return `${s} second${s === 1 ? "" : "s"}`;
+  }
   const minutes = Math.ceil(seconds / 60);
   return `${minutes} minute${minutes === 1 ? "" : "s"}`;
 }

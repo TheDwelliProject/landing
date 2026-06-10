@@ -3,16 +3,24 @@ import "server-only";
 import { env } from "@/lib/env";
 
 export type JSendSuccess<T> = { status: "success"; data: T } | T;
-export type JSendError = { status: "error"; code: string; message: string };
+export type JSendError = {
+  status: "error";
+  code: string;
+  message: string;
+  data?: unknown;
+};
 
 export class BackendError extends Error {
   readonly code: string;
   readonly status: number;
-  constructor(code: string, status: number, message: string) {
+  /** Structured error details from the backend envelope (e.g. retry timing on 429s). */
+  readonly data?: unknown;
+  constructor(code: string, status: number, message: string, data?: unknown) {
     super(message);
     this.name = "BackendError";
     this.code = code;
     this.status = status;
+    this.data = data;
   }
 }
 
@@ -61,7 +69,12 @@ export async function callBackend<T>(
 
   if (!response.ok) {
     if (isJSendError(parsed)) {
-      throw new BackendError(parsed.code, response.status, parsed.message);
+      throw new BackendError(
+        parsed.code,
+        response.status,
+        parsed.message,
+        parsed.data,
+      );
     }
     throw new BackendError(
       "internal_error",
@@ -71,7 +84,12 @@ export async function callBackend<T>(
   }
 
   if (isJSendError(parsed)) {
-    throw new BackendError(parsed.code, response.status, parsed.message);
+    throw new BackendError(
+      parsed.code,
+      response.status,
+      parsed.message,
+      parsed.data,
+    );
   }
 
   if (isJSendSuccess(parsed)) {

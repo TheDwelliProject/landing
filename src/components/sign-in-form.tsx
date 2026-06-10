@@ -11,6 +11,7 @@ import { applyError } from "@/lib/auth/errors";
 import { phoneSchema, type PhoneInput as PhoneFormValues } from "@/lib/auth/schemas";
 
 const PENDING_PHONE_KEY = "dwelli_pending_phone";
+const RESEND_AVAILABLE_AT_KEY = "dwelli_resend_available_at";
 
 export function SignInForm() {
   const router = useRouter();
@@ -30,13 +31,21 @@ export function SignInForm() {
   async function onSubmit(values: PhoneFormValues) {
     setSubmitting(true);
     try {
-      await apiFetch("/api/auth/request-otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: values.phone }),
-        skipRefresh: true,
-      });
+      const data = await apiFetch<{ resend_available_at?: string }>(
+        "/api/auth/request-otp",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phone: values.phone }),
+          skipRefresh: true,
+        },
+      );
       sessionStorage.setItem(PENDING_PHONE_KEY, values.phone);
+      if (data?.resend_available_at) {
+        sessionStorage.setItem(RESEND_AVAILABLE_AT_KEY, data.resend_available_at);
+      } else {
+        sessionStorage.removeItem(RESEND_AVAILABLE_AT_KEY);
+      }
       const params = new URLSearchParams();
       const intent = searchParams.get("intent");
       if (intent) params.set("intent", intent);

@@ -12,7 +12,7 @@ import { verifyBodySchema } from "@/lib/auth/schemas";
 
 export const runtime = "nodejs";
 
-type VerifyResponse = TokenPair & { user_id: string };
+type VerifyResponse = TokenPair & { user_id: string; is_new_user?: boolean };
 
 export async function POST(request: NextRequest) {
   let raw: unknown;
@@ -37,7 +37,13 @@ export async function POST(request: NextRequest) {
       body: parsed.data,
     });
 
-    const response = jsendSuccess({ user_id: data.user_id });
+    // is_new_user is true when this verify created the account — the client
+    // uses it to route brand-new users into onboarding. Treat absence as
+    // false so an older backend keeps returning users on the normal path.
+    const response = jsendSuccess({
+      user_id: data.user_id,
+      is_new_user: data.is_new_user === true,
+    });
     setAuthCookies(response, data);
     return response;
   } catch (err) {

@@ -22,6 +22,9 @@ import { otpSchema, type OtpInput } from "@/lib/auth/schemas";
 
 const PENDING_PHONE_KEY = "dwelli_pending_phone";
 const RESEND_AVAILABLE_AT_KEY = "dwelli_resend_available_at";
+// Hands the verified phone to /onboarding/profile so its header can show
+// which account the new user just created. Read (and cleared) over there.
+const PROFILE_PHONE_KEY = "dwelli_profile_phone";
 // Fallbacks only — the backend sends `resend_available_at` on every
 // successful /v1/auth/otp call and `retry_after_seconds` on every 429.
 const RESEND_FALLBACK_SECONDS = 60;
@@ -129,24 +132,41 @@ export function OtpForm() {
       if (!phone || state === "verified" || state === "too-many-tries") return;
       setSubmitting(true);
       try {
-        await apiFetch<{ user_id: string }>("/api/auth/verify", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            phone,
-            otp: values.otp,
-            device_label: deriveDeviceLabel(
-              typeof navigator === "undefined" ? null : navigator.userAgent,
-            ),
-          }),
-          skipRefresh: true,
-        });
+        const data = await apiFetch<{ user_id: string; is_new_user?: boolean }>(
+          "/api/auth/verify",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              phone,
+              otp: values.otp,
+              device_label: deriveDeviceLabel(
+                typeof navigator === "undefined" ? null : navigator.userAgent,
+              ),
+            }),
+            skipRefresh: true,
+          },
+        );
         sessionStorage.removeItem(PENDING_PHONE_KEY);
         sessionStorage.removeItem(RESEND_AVAILABLE_AT_KEY);
+        if (data?.is_new_user) {
+          sessionStorage.setItem(PROFILE_PHONE_KEY, phone);
+        }
         await refresh();
         setState("verified");
         redirectRef.current = window.setTimeout(() => {
-          router.replace(safeReturnTo(searchParams.get("returnTo")));
+          const returnTo = searchParams.get("returnTo");
+          // Brand-new account -> collect their name first. The returnTo hint
+          // rides along so the profile screen can resume the original journey.
+          if (data?.is_new_user) {
+            router.replace(
+              returnTo
+                ? `/onboarding/profile?returnTo=${encodeURIComponent(returnTo)}`
+                : "/onboarding/profile",
+            );
+            return;
+          }
+          router.replace(safeReturnTo(returnTo));
         }, VERIFIED_REDIRECT_DELAY_MS);
       } catch (err) {
         if (err instanceof ApiError && err.code === "invalid_otp") {

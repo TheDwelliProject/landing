@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { AlertTriangle, BadgeCheck, CircleX } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -84,6 +84,18 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 	});
 
 	const otpValue = useWatch({ control: form.control, name: "otp" });
+
+	const shouldRenderFormError = useMemo(() => {
+		if (form.formState.errors.otp) {
+			const { type } = form.formState.errors.otp;
+			return (
+				!isPaused &&
+				type === "invalid_format" &&
+				form.getValues("otp").length < 6
+			);
+		}
+		return false;
+	}, [form]);
 
 	useEffect(() => {
 		const stored = sessionStorage.getItem(PENDING_PHONE_KEY);
@@ -415,7 +427,7 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 						/>
 					)}
 
-					{otpError && !isPaused && (
+					{shouldRenderFormError && (
 						<p className="mt-3 text-sm text-red-400" role="alert">
 							{otpError}
 						</p>

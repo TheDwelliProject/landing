@@ -1,0 +1,15 @@
+#:schema https://conductor.build/schemas/settings.repo.schema.json
+
+[scripts]
+# Install dependencies when a workspace is created (pnpm per pnpm-lock.yaml / Dockerfile).
+setup = "pnpm install"
+
+# `pnpm dev` runs `next dev --turbopack`; pass the workspace port so multiple
+# workspaces can run dev servers side by side.
+run = "pnpm dev --port $CONDUCTOR_PORT"
+
+# Each workspace gets its own port and there are no shared local resources
+# (no database, no Docker stack), so concurrent runs are safe.
+run_mode = "concurrent"
+
+# No archive script: workspaces create no external resources that need teardown.

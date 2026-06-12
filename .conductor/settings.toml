@@ -6,7 +6,7 @@ setup = "pnpm install"
 
 # `pnpm dev` runs `next dev --turbopack`; pass the workspace port so multiple
 # workspaces can run dev servers side by side.
-run = "pnpm dev --port $CONDUCTOR_PORT"
+run = "DWELLI_API_URL=localhost:8080 pnpm dev --port $CONDUCTOR_PORT"
 
 # Each workspace gets its own port and there are no shared local resources
 # (no database, no Docker stack), so concurrent runs are safe.

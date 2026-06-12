@@ -30,7 +30,7 @@ export default function Navbar() {
         </div>
         <div className="flex items-center gap-3">
           <Link
-            href="#signin"
+            href="/auth"
             className="hidden sm:inline-flex text-[14.5px] font-medium text-charcoal hover:text-charcoal/70 px-2"
           >
             Sign in

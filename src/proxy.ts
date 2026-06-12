@@ -4,11 +4,11 @@ import { ACCESS_COOKIE } from "@/lib/auth/cookie-names";
 import { JwtVerifierUnavailableError, verifyAccessJwt } from "@/lib/auth/jwt";
 
 const ADMIN_PREFIXES = [
-  "/communities",
-  "/onboarding",
-  "/wizard",
-  "/r",
-  "/start-here",
+	"/communities",
+	"/onboarding",
+	"/wizard",
+	"/r",
+	"/start-here",
 ];
 
 const SUPERADMIN_PREFIXES = ["/admin"];
@@ -16,78 +16,86 @@ const SUPERADMIN_PREFIXES = ["/admin"];
 type Group = "admin" | "superadmin" | "public";
 
 function classify(pathname: string): Group {
-  if (SUPERADMIN_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
-    return "superadmin";
-  }
-  if (ADMIN_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
-    return "admin";
-  }
-  return "public";
+	if (
+		SUPERADMIN_PREFIXES.some(
+			(p) => pathname === p || pathname.startsWith(`${p}/`),
+		)
+	) {
+		return "superadmin";
+	}
+	if (
+		ADMIN_PREFIXES.some(
+			(p) => pathname === p || pathname.startsWith(`${p}/`),
+		)
+	) {
+		return "admin";
+	}
+	return "public";
 }
 
 export async function proxy(request: NextRequest) {
-  const { pathname, search } = request.nextUrl;
-  const group = classify(pathname);
+	const { pathname, search } = request.nextUrl;
+	const group = classify(pathname);
 
-  if (group === "public") {
-    return NextResponse.next();
-  }
+	if (group === "public") {
+		return NextResponse.next();
+	}
 
-  const token = request.cookies.get(ACCESS_COOKIE)?.value;
-  let claims;
-  try {
-    claims = await verifyOrNull(token);
-  } catch {
-    return new NextResponse("Authentication temporarily unavailable", {
-      status: 503,
-    });
-  }
+	const token = request.cookies.get(ACCESS_COOKIE)?.value;
+	let claims;
+	try {
+		claims = await verifyOrNull(token);
+	} catch {
+		return new NextResponse("Authentication temporarily unavailable", {
+			status: 503,
+		});
+	}
 
-  if (group === "admin") {
-    if (!claims) {
-      return redirectToRefresh(request, pathname + search);
-    }
-    return NextResponse.next();
-  }
+	if (group === "admin") {
+		if (!claims) {
+			return redirectToRefresh(request, pathname + search);
+		}
+		return NextResponse.next();
+	}
 
-  // group === "superadmin"
-  if (!claims) {
-    return redirectToRefresh(request, pathname + search);
-  }
-  if (!claims.superadmin) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/communities";
-    url.search = "";
-    return NextResponse.redirect(url);
-  }
-  return NextResponse.next();
+	// group === "superadmin"
+	if (!claims) {
+		return redirectToRefresh(request, pathname + search);
+	}
+	if (!claims.superadmin) {
+		const url = request.nextUrl.clone();
+		url.pathname = "/communities";
+		url.search = "";
+		return NextResponse.redirect(url);
+	}
+	return NextResponse.next();
 }
 
 async function verifyOrNull(token: string | undefined) {
-  if (!token) return null;
-  try {
-    return await verifyAccessJwt(token);
-  } catch (err) {
-    if (err instanceof JwtVerifierUnavailableError) throw err;
-    return null;
-  }
+	if (!token) return null;
+	try {
+		return await verifyAccessJwt(token);
+	} catch (err) {
+		if (err instanceof JwtVerifierUnavailableError) throw err;
+		return null;
+	}
 }
 
 function redirectToRefresh(request: NextRequest, returnTo: string) {
-  const url = request.nextUrl.clone();
-  url.pathname = "/api/auth/refresh";
-  url.search = `?returnTo=${encodeURIComponent(returnTo)}`;
-  return NextResponse.redirect(url);
+	const url = request.nextUrl.clone();
+	url.pathname = "/api/auth/refresh";
+	url.search = `?returnTo=${encodeURIComponent(returnTo)}`;
+	return NextResponse.redirect(url);
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match every request except for:
-     * - /api routes (BFF handles its own auth via cookies)
-     * - /_next static and image optimization paths
-     * - favicon / public assets with a file extension
-     */
-    "/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)",
-  ],
+	matcher: [
+		/*
+		 * Match every request except for:
+		 * - /api routes (BFF handles its own auth via cookies)
+		 * - /_next static and image optimization paths
+		 * - favicon / public assets with a file extension
+		 */
+		"/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)",
+	],
 };

@@ -12,22 +12,22 @@ import { PROFILE_PHONE_KEY } from "@/lib/auth/storage";
  * the user reopened this screen in a fresh tab).
  */
 export function ProfilePhone() {
-  const [phone, setPhone] = useState<string | null>(null);
+	const [phone, setPhone] = useState<string | null>(null);
 
-  useEffect(() => {
-    const stored = sessionStorage.getItem(PROFILE_PHONE_KEY);
-    if (!stored) return;
-    // Session storage is client-only, so this state is intentionally
-    // populated after hydration rather than during render.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setPhone(parsePhoneNumber(stored)?.formatInternational() ?? stored);
-  }, []);
+	useEffect(() => {
+		const stored = sessionStorage.getItem(PROFILE_PHONE_KEY);
+		if (!stored) return;
+		// Session storage is client-only, so this state is intentionally
+		// populated after hydration rather than during render.
+		// eslint-disable-next-line react-hooks/set-state-in-effect
+		setPhone(parsePhoneNumber(stored)?.formatInternational() ?? stored);
+	}, []);
 
-  if (!phone) return null;
+	if (!phone) return null;
 
-  return (
-    <span className="font-mono text-[11px] tracking-[0.08em] text-white/45">
-      {phone}
-    </span>
-  );
+	return (
+		<span className="font-mono text-[11px] tracking-[0.08em] text-white/45">
+			{phone}
+		</span>
+	);
 }

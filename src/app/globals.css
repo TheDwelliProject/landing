@@ -5,79 +5,79 @@
 @tailwind utilities;
 
 .dwelli-phone-input .PhoneInput {
-  display: flex;
-  flex: 1;
-  min-width: 0;
+	display: flex;
+	flex: 1;
+	min-width: 0;
 }
 
 .dwelli-phone-input .PhoneInputCountry {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding-left: 1rem;
-  padding-right: 0.75rem;
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding-left: 1rem;
+	padding-right: 0.75rem;
+	border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .dwelli-phone-input .PhoneInputCountryIcon {
-  width: 1.5rem;
-  height: 1.125rem;
-  box-shadow: none;
-  background: transparent;
+	width: 1.5rem;
+	height: 1.125rem;
+	box-shadow: none;
+	background: transparent;
 }
 
 .dwelli-phone-input .PhoneInputCountryIcon--border {
-  box-shadow: none;
+	box-shadow: none;
 }
 
 .dwelli-phone-input .PhoneInputCountrySelectArrow {
-  color: rgba(255, 255, 255, 0.55);
-  opacity: 1;
-  margin-left: 0.25rem;
+	color: rgba(255, 255, 255, 0.55);
+	opacity: 1;
+	margin-left: 0.25rem;
 }
 
 .dwelli-phone-input .PhoneInputInput {
-  flex: 1;
-  min-width: 0;
-  background: transparent;
-  border: 0;
-  outline: 0;
-  color: #fff;
-  font-size: 18px;
-  padding: 1rem 0 1rem 1rem;
+	flex: 1;
+	min-width: 0;
+	background: transparent;
+	border: 0;
+	outline: 0;
+	color: #fff;
+	font-size: 18px;
+	padding: 1rem 0 1rem 1rem;
 }
 
 .dwelli-phone-input .PhoneInputInput::placeholder {
-  color: rgba(255, 255, 255, 0.3);
+	color: rgba(255, 255, 255, 0.3);
 }
 
 @layer base {
-  :root {
-    --background: #f4f1ea;
-    --foreground: #1c1b19;
-    --muted: 30 8% 90%;
-    --muted-foreground: 30 6% 28%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 30 8% 11%;
-    --card: 0 0% 100%;
-    --card-foreground: 30 8% 11%;
-    --border: 30 6% 86%;
-    --input: 30 6% 86%;
-    --primary: 16 100% 51%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 30 8% 94%;
-    --secondary-foreground: 30 8% 11%;
-    --accent: 30 8% 94%;
-    --accent-foreground: 30 8% 11%;
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
-    --ring: 16 100% 51%;
-    --radius: 0.75rem;
-  }
+	:root {
+		--background: #f4f1ea;
+		--foreground: #1c1b19;
+		--muted: 30 8% 90%;
+		--muted-foreground: 30 6% 28%;
+		--popover: 0 0% 100%;
+		--popover-foreground: 30 8% 11%;
+		--card: 0 0% 100%;
+		--card-foreground: 30 8% 11%;
+		--border: 30 6% 86%;
+		--input: 30 6% 86%;
+		--primary: 16 100% 51%;
+		--primary-foreground: 0 0% 100%;
+		--secondary: 30 8% 94%;
+		--secondary-foreground: 30 8% 11%;
+		--accent: 30 8% 94%;
+		--accent-foreground: 30 8% 11%;
+		--destructive: 0 72% 51%;
+		--destructive-foreground: 0 0% 100%;
+		--ring: 16 100% 51%;
+		--radius: 0.75rem;
+	}
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  overflow-x: hidden;
+	color: var(--foreground);
+	background: var(--background);
+	overflow-x: hidden;
 }

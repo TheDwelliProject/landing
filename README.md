@@ -33,21 +33,23 @@ The dev server runs on http://localhost:3000 with Turbopack.
 
 Create `.env.local` at the repo root:
 
-| Variable             | Required | Notes                                                              |
-| -------------------- | -------- | ------------------------------------------------------------------ |
-| `DWELLI_API_URL`     | yes      | Base URL of the Dwelli backend the BFF proxies to.                 |
-| `AUTH_COOKIE_SECURE` | no       | Set to `false` for local HTTP development. Defaults to `true`.     |
+| Variable             | Required | Notes                                                          |
+| -------------------- | -------- | -------------------------------------------------------------- |
+| `DWELLI_API_URL`     | yes      | Base URL of the Dwelli backend the BFF proxies to.             |
+| `AUTH_COOKIE_SECURE` | no       | Set to `false` for local HTTP development. Defaults to `true`. |
 
 Server-only env access lives in `src/lib/env.ts`.
 
 ## Scripts
 
-| Command        | Description                          |
-| -------------- | ------------------------------------ |
-| `pnpm dev`     | Start the dev server (Turbopack).    |
-| `pnpm build`   | Production build (standalone).       |
-| `pnpm start`   | Run the production build locally.    |
-| `pnpm lint`    | Run ESLint.                          |
+| Command             | Description                       |
+| ------------------- | --------------------------------- |
+| `pnpm dev`          | Start the dev server (Turbopack). |
+| `pnpm build`        | Production build (standalone).    |
+| `pnpm start`        | Run the production build locally. |
+| `pnpm lint`         | Run ESLint.                       |
+| `pnpm format:check` | Check Prettier formatting.        |
+| `pnpm format:fix`   | Fix Prettier formatting.          |
 
 ## Project layout
 

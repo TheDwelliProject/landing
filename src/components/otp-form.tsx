@@ -2,9 +2,8 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { AlertTriangle, BadgeCheck, CircleX } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useRef, useState } from "react";
+import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { toast } from "sonner";
 
 import {
@@ -12,19 +11,18 @@ import {
 	InputOTPGroup,
 	InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { ApiError } from "@/lib/api";
-import { apiFetch } from "@/lib/api";
+import { ApiError, apiFetch } from "@/lib/api";
 import { useAuth } from "@/lib/auth/context";
 import { deriveDeviceLabel } from "@/lib/auth/device-label";
 import { applyError } from "@/lib/auth/errors";
 import { safeReturnTo } from "@/lib/auth/return-to";
-import { otpSchema, type OtpInput } from "@/lib/auth/schemas";
+import type { OtpInput } from "@/lib/auth/schemas";
+import {
+	PENDING_PHONE_KEY,
+	PROFILE_PHONE_KEY,
+	RESEND_AVAILABLE_AT_KEY,
+} from "@/lib/auth/storage";
 
-const PENDING_PHONE_KEY = "dwelli_pending_phone";
-const RESEND_AVAILABLE_AT_KEY = "dwelli_resend_available_at";
-// Hands the verified phone to /onboarding/profile so its header can show
-// which account the new user just created. Read (and cleared) over there.
-const PROFILE_PHONE_KEY = "dwelli_profile_phone";
 // Fallbacks only — the backend sends `resend_available_at` on every
 // successful /v1/auth/otp call and `retry_after_seconds` on every 429.
 const RESEND_FALLBACK_SECONDS = 60;
@@ -35,6 +33,7 @@ const RATE_LIMIT_FALLBACK_SECONDS = 60;
 // recommendation) since attempts from other devices/sessions also count.
 const TOO_MANY_TRIES_AFTER = 3;
 const VERIFIED_REDIRECT_DELAY_MS = 950;
+const OTP_LENGTH = 6;
 
 type OtpState = "entry" | "rate-limited" | "too-many-tries" | "verified";
 
@@ -51,6 +50,17 @@ function secondsUntil(iso: string | null | undefined): number | null {
 	return Math.max(0, Math.ceil((at - Date.now()) / 1000));
 }
 
+/** Ticks down to zero once per second; assign a new value to restart it. */
+function useCountdown(initialSeconds = 0) {
+	const [seconds, setSeconds] = useState(initialSeconds);
+	useEffect(() => {
+		if (seconds <= 0) return;
+		const timeout = window.setTimeout(() => setSeconds((s) => s - 1), 1000);
+		return () => window.clearTimeout(timeout);
+	}, [seconds]);
+	return [seconds, setSeconds] as const;
+}
+
 type OtpFormProps = {
 	intentLabel?: string;
 };
@@ -60,47 +70,30 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 	const searchParams = useSearchParams();
 	const { refresh } = useAuth();
 	const [phone, setPhone] = useState<string | null>(null);
+	const [otp, setOtp] = useState("");
+	const [otpError, setOtpError] = useState<string | null>(null);
 	const [submitting, setSubmitting] = useState(false);
-	const [secondsLeft, setSecondsLeft] = useState(RESEND_FALLBACK_SECONDS);
 	const [resending, setResending] = useState(false);
 	const [state, setState] = useState<OtpState>("entry");
-	const [invalidAttempts, setInvalidAttempts] = useState(0);
-	const [pauseSecondsLeft, setPauseSecondsLeft] = useState(0);
 	// Both /v1/auth/otp and /v1/auth/verify can 429; the copy differs.
 	const [rateLimitedBy, setRateLimitedBy] = useState<"request" | "verify">(
 		"request",
 	);
-	const tickRef = useRef<number | null>(null);
+	const [secondsLeft, setSecondsLeft] = useCountdown(RESEND_FALLBACK_SECONDS);
+	const [pauseSecondsLeft, setPauseSecondsLeft] = useCountdown();
+	// Logic-only counter (never rendered), so a ref instead of state.
+	const invalidAttemptsRef = useRef(0);
 	const redirectRef = useRef<number | null>(null);
-	// Guards against the rare double-submit caused by input-otp's internal
-	// synthetic input re-dispatches racing the network call — the React
-	// `submitting` state lags one render behind and isn't a reliable gate.
+	// Guards against the rare double-submit caused by input-otp's onComplete
+	// re-dispatching alongside the form submit — the React `submitting` state
+	// lags one render behind and isn't a reliable gate.
 	const inFlightRef = useRef(false);
-
-	const form = useForm<OtpInput>({
-		resolver: zodResolver(otpSchema),
-		defaultValues: { otp: "" },
-		mode: "onChange",
-	});
-
-	const otpValue = useWatch({ control: form.control, name: "otp" });
-
-	const shouldRenderFormError = useMemo(() => {
-		if (form.formState.errors.otp) {
-			const { type } = form.formState.errors.otp;
-			return (
-				!isPaused &&
-				type === "invalid_format" &&
-				form.getValues("otp").length < 6
-			);
-		}
-		return false;
-	}, [form]);
 
 	useEffect(() => {
 		const stored = sessionStorage.getItem(PENDING_PHONE_KEY);
 		if (!stored) {
-			router.replace("/auth");
+			const qs = searchParams.toString();
+			router.replace(qs ? `/auth?${qs}` : "/auth");
 			return;
 		}
 		// Session storage is client-only, so this state is intentionally populated
@@ -109,37 +102,9 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 		setPhone(stored);
 		// Seed the resend cooldown from the timestamp the backend returned when
 		// the code was requested, instead of guessing a flat window.
-		const wait = secondsUntil(
-			sessionStorage.getItem(RESEND_AVAILABLE_AT_KEY),
-		);
+		const wait = secondsUntil(sessionStorage.getItem(RESEND_AVAILABLE_AT_KEY));
 		if (wait !== null) setSecondsLeft(wait);
-	}, [router]);
-
-	useEffect(() => {
-		if (secondsLeft <= 0) return;
-		tickRef.current = window.setTimeout(
-			() => setSecondsLeft((s) => s - 1),
-			1000,
-		);
-		return () => {
-			if (tickRef.current) window.clearTimeout(tickRef.current);
-		};
-	}, [secondsLeft]);
-
-	// Rate-limit pauses lift on the backend's clock; "too many tries" has no
-	// timer — that state only clears when a new code is requested.
-	useEffect(() => {
-		if (pauseSecondsLeft <= 0) return;
-		const timeout = window.setTimeout(() => {
-			setPauseSecondsLeft((seconds) => Math.max(0, seconds - 1));
-			if (pauseSecondsLeft <= 1) {
-				setState((current) =>
-					current === "rate-limited" ? "entry" : current,
-				);
-			}
-		}, 1000);
-		return () => window.clearTimeout(timeout);
-	}, [pauseSecondsLeft]);
+	}, [router, searchParams, setSecondsLeft]);
 
 	useEffect(() => {
 		return () => {
@@ -147,102 +112,92 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 		};
 	}, []);
 
-	const onSubmit = useCallback(
-		async (values: OtpInput) => {
-			if (!phone || state === "verified" || state === "too-many-tries")
-				return;
-			setSubmitting(true);
-			try {
-				const data = await apiFetch<{
-					user_id: string;
-					is_new_user?: boolean;
-				}>("/api/auth/verify", {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
-						phone,
-						otp: values.otp,
-						device_label: deriveDeviceLabel(
-							typeof navigator === "undefined"
-								? null
-								: navigator.userAgent,
-						),
-					}),
-					skipRefresh: true,
-				});
-				sessionStorage.removeItem(PENDING_PHONE_KEY);
-				sessionStorage.removeItem(RESEND_AVAILABLE_AT_KEY);
+	// Rate-limit pauses lift on the backend's clock, so "rate-limited" is only
+	// real while its countdown runs; "too many tries" has no timer — that state
+	// only clears when a new code is requested.
+	const uiState: OtpState =
+		state === "rate-limited" && pauseSecondsLeft <= 0 ? "entry" : state;
+	const isPaused = uiState === "rate-limited" || uiState === "too-many-tries";
+	const isVerified = uiState === "verified";
+	const canRequestNewCode = secondsLeft <= 0 && pauseSecondsLeft <= 0;
+
+	async function verify() {
+		if (inFlightRef.current) return;
+		if (!phone || otp.length !== OTP_LENGTH || isPaused || isVerified) return;
+		inFlightRef.current = true;
+		setSubmitting(true);
+		setOtpError(null);
+		try {
+			const data = await apiFetch<{
+				user_id: string;
+				is_new_user?: boolean;
+			}>("/api/auth/verify", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					phone,
+					otp,
+					device_label: deriveDeviceLabel(
+						typeof navigator === "undefined" ? null : navigator.userAgent,
+					),
+				}),
+				skipRefresh: true,
+			});
+			sessionStorage.removeItem(PENDING_PHONE_KEY);
+			sessionStorage.removeItem(RESEND_AVAILABLE_AT_KEY);
+			if (data?.is_new_user) {
+				sessionStorage.setItem(PROFILE_PHONE_KEY, phone);
+			}
+			await refresh();
+			setState("verified");
+			redirectRef.current = window.setTimeout(() => {
+				const returnTo = searchParams.get("returnTo");
+				// Brand-new account -> collect their name first. The returnTo hint
+				// rides along so the profile screen can resume the original journey.
 				if (data?.is_new_user) {
-					sessionStorage.setItem(PROFILE_PHONE_KEY, phone);
-				}
-				await refresh();
-				setState("verified");
-				redirectRef.current = window.setTimeout(() => {
-					const returnTo = searchParams.get("returnTo");
-					// Brand-new account -> collect their name first. The returnTo hint
-					// rides along so the profile screen can resume the original journey.
-					if (data?.is_new_user) {
-						router.replace(
-							returnTo
-								? `/onboarding/profile?returnTo=${encodeURIComponent(returnTo)}`
-								: "/onboarding/profile",
-						);
-						return;
-					}
-					router.replace(safeReturnTo(returnTo));
-				}, VERIFIED_REDIRECT_DELAY_MS);
-			} catch (err) {
-				if (err instanceof ApiError && err.code === "invalid_otp") {
-					const nextAttempts = invalidAttempts + 1;
-					setInvalidAttempts(nextAttempts);
-					form.setValue("otp", "", { shouldDirty: true });
-					// Re-validate the cleared field before setting the custom error —
-					// setValue's shouldValidate runs the resolver async, which would
-					// resolve after setError and clobber this message with the schema's.
-					await form.trigger("otp");
-					if (nextAttempts >= TOO_MANY_TRIES_AFTER) {
-						setState("too-many-tries");
-						return;
-					}
-					form.setError("otp", {
-						message:
-							"Code incorrect or expired. Try again or request a new code.",
-					});
-					return;
-				}
-				if (err instanceof ApiError && err.code === "rate_limited") {
-					setRateLimitedBy("verify");
-					setState("rate-limited");
-					setPauseSecondsLeft(
-						err.retryAfterSeconds ?? RATE_LIMIT_FALLBACK_SECONDS,
+					router.replace(
+						returnTo
+							? `/onboarding/profile?returnTo=${encodeURIComponent(returnTo)}`
+							: "/onboarding/profile",
 					);
 					return;
 				}
-				applyError(err, {
-					setError: form.setError,
-					fieldMap: { invalid_otp: "otp", validation_failed: "otp" },
-					clear: { setValue: form.setValue, fields: ["otp"] },
-				});
-			} finally {
-				setSubmitting(false);
+				router.replace(safeReturnTo(returnTo));
+			}, VERIFIED_REDIRECT_DELAY_MS);
+		} catch (err) {
+			if (err instanceof ApiError && err.code === "invalid_otp") {
+				setOtp("");
+				invalidAttemptsRef.current += 1;
+				if (invalidAttemptsRef.current >= TOO_MANY_TRIES_AFTER) {
+					setState("too-many-tries");
+					return;
+				}
+				setOtpError(
+					"Code incorrect or expired. Try again or request a new code.",
+				);
+				return;
 			}
-		},
-		[phone, state, refresh, router, form, searchParams, invalidAttempts],
-	);
-
-	const submitOnce = useCallback(() => {
-		if (inFlightRef.current) return;
-		inFlightRef.current = true;
-		void form
-			.handleSubmit(onSubmit)()
-			.finally(() => {
-				inFlightRef.current = false;
+			if (err instanceof ApiError && err.code === "rate_limited") {
+				setRateLimitedBy("verify");
+				setState("rate-limited");
+				setPauseSecondsLeft(
+					err.retryAfterSeconds ?? RATE_LIMIT_FALLBACK_SECONDS,
+				);
+				return;
+			}
+			applyError<OtpInput>(err, {
+				setError: (_field, error) => setOtpError(error.message ?? null),
+				fieldMap: { invalid_otp: "otp", validation_failed: "otp" },
+				clear: { setValue: () => setOtp(""), fields: ["otp"] },
 			});
-	}, [form, onSubmit]);
+		} finally {
+			inFlightRef.current = false;
+			setSubmitting(false);
+		}
+	}
 
 	async function handleResend() {
-		if (!phone || secondsLeft > 0 || pauseSecondsLeft > 0 || resending)
-			return;
+		if (!phone || !canRequestNewCode || resending) return;
 		setResending(true);
 		try {
 			const data = await apiFetch<{ resend_available_at?: string }>(
@@ -261,12 +216,11 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 				);
 			}
 			setSecondsLeft(
-				secondsUntil(data?.resend_available_at) ??
-					RESEND_FALLBACK_SECONDS,
+				secondsUntil(data?.resend_available_at) ?? RESEND_FALLBACK_SECONDS,
 			);
-			setInvalidAttempts(0);
+			invalidAttemptsRef.current = 0;
 			setState("entry");
-			form.clearErrors("otp");
+			setOtpError(null);
 			toast.success("New code sent.");
 		} catch (err) {
 			if (err instanceof ApiError && err.code === "rate_limited") {
@@ -277,7 +231,9 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 				);
 				return;
 			}
-			applyError(err, { setError: form.setError });
+			applyError<OtpInput>(err, {
+				setError: (_field, error) => setOtpError(error.message ?? null),
+			});
 		} finally {
 			setResending(false);
 		}
@@ -287,23 +243,18 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 		return null;
 	}
 
-	const otpError = form.formState.errors.otp?.message;
-	const isPaused = state === "rate-limited" || state === "too-many-tries";
-	const isVerified = state === "verified";
-	const canRequestNewCode = secondsLeft <= 0 && pauseSecondsLeft <= 0;
-
 	return (
 		<form
 			onSubmit={(e) => {
 				e.preventDefault();
-				submitOnce();
+				void verify();
 			}}
 			className="mt-10"
 			noValidate
 			aria-busy={submitting}
 		>
 			{isVerified ? (
-				<VerifiedState otp={otpValue} />
+				<VerifiedState otp={otp} />
 			) : (
 				<>
 					<div className="mb-8">
@@ -345,7 +296,10 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 						</span>{" "}
 						<button
 							type="button"
-							onClick={() => router.push("/auth")}
+							onClick={() => {
+								const qs = searchParams.toString();
+								router.push(qs ? `/auth?${qs}` : "/auth");
+							}}
 							className="text-orange underline-offset-2 hover:underline"
 						>
 							edit
@@ -358,16 +312,15 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 
 					<InputOTP
 						id="otp"
-						maxLength={6}
+						maxLength={OTP_LENGTH}
+						pattern={REGEXP_ONLY_DIGITS}
 						autoFocus
-						value={otpValue}
-						onChange={(value) =>
-							form.setValue("otp", value, {
-								shouldValidate: true,
-								shouldDirty: true,
-							})
-						}
-						onComplete={submitOnce}
+						value={otp}
+						onChange={(value) => {
+							setOtp(value);
+							if (otpError) setOtpError(null);
+						}}
+						onComplete={() => void verify()}
 						disabled={submitting || isPaused}
 						inputMode="numeric"
 						containerClassName="mt-7 gap-2 max-w-full overflow-hidden"
@@ -378,7 +331,7 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 									key={i}
 									index={i}
 									className={`h-16 w-[3.35rem] rounded-xl border bg-white/[0.04] text-white text-2xl font-semibold first:rounded-xl last:rounded-xl ${
-										state === "too-many-tries"
+										uiState === "too-many-tries"
 											? "border-red-400/40 bg-red-500/[0.07] text-white/40"
 											: "border-white/18"
 									}`}
@@ -387,14 +340,11 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 						</InputOTPGroup>
 					</InputOTP>
 
-					{state === "rate-limited" && (
+					{uiState === "rate-limited" && (
 						<OtpStatusPanel
 							tone="amber"
 							icon={
-								<AlertTriangle
-									className="h-4 w-4"
-									aria-hidden="true"
-								/>
+								<AlertTriangle className="h-4 w-4" aria-hidden="true" />
 							}
 							title={
 								rateLimitedBy === "verify"
@@ -409,15 +359,10 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 						/>
 					)}
 
-					{state === "too-many-tries" && (
+					{uiState === "too-many-tries" && (
 						<OtpStatusPanel
 							tone="red"
-							icon={
-								<CircleX
-									className="h-4 w-4"
-									aria-hidden="true"
-								/>
-							}
+							icon={<CircleX className="h-4 w-4" aria-hidden="true" />}
 							title="Too many incorrect tries"
 							body={
 								canRequestNewCode
@@ -427,7 +372,7 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 						/>
 					)}
 
-					{shouldRenderFormError && (
+					{uiState === "entry" && otpError && (
 						<p className="mt-3 text-sm text-red-400" role="alert">
 							{otpError}
 						</p>
@@ -445,7 +390,7 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 							</button>
 						) : (
 							<span>
-								{state === "rate-limited"
+								{uiState === "rate-limited"
 									? "Resend paused"
 									: `Resend available in ${secondsLeft}s`}
 							</span>
@@ -458,9 +403,7 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 
 					<button
 						type="submit"
-						disabled={
-							!form.formState.isValid || submitting || isPaused
-						}
+						disabled={otp.length !== OTP_LENGTH || submitting || isPaused}
 						className="mt-7 w-full inline-flex items-center justify-center gap-2 h-14 rounded-full text-[16.5px] font-semibold transition-colors bg-orange text-white enabled:hover:bg-orange/90 disabled:bg-white/8 disabled:text-white/35 disabled:cursor-not-allowed"
 					>
 						<span>{submitting ? "Verifying…" : "Verify code"}</span>

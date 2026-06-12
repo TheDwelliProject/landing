@@ -1,10 +1,27 @@
+# Dependencies
 node_modules
+
+# Build output
 .next
 .turbo
 dist
 build
 coverage
+tsconfig.tsbuildinfo
+
+# Lockfiles
 pnpm-lock.yaml
+
+# Static assets
+public
+
+# Design / docs / mocks
 mocks
 plans
+
+# Tooling state
 .claude
+.conductor
+.context
+.git
+.github

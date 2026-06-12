@@ -24,7 +24,7 @@ export default function Home() {
 							<div className="flex items-center gap-2 mb-7">
 								<span className="w-1.5 h-1.5 rounded-full bg-orange" />
 								<span className="font-mono uppercase tracking-[0.16em] text-[11px] text-orange">
-									For owners &amp; managers · Lagos
+									For owners &amp; managers
 								</span>
 							</div>
 

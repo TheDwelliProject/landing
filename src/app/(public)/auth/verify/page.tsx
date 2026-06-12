@@ -23,17 +23,17 @@ export default async function VerifyPage({
 	const intentLabel = intent ? INTENT_LABELS[intent] : undefined;
 
 	return (
-		<div className="min-h-screen bg-charcoal text-white flex flex-col">
+		<div className="min-h-screen bg-background text-charcoal flex flex-col">
 			<Container as="header" className="pt-7">
 				<div className="flex items-center gap-3">
 					<Link href="/" className="flex items-center">
 						<Logo
 							size={22}
-							variant="white-on-orange"
-							wordmarkClassName="text-[18px] text-white"
+							variant="orange"
+							wordmarkClassName="text-[18px] text-charcoal"
 						/>
 					</Link>
-					<span className="font-mono uppercase tracking-[0.16em] text-[10px] text-white/45">
+					<span className="font-mono uppercase tracking-[0.16em] text-[10px] text-[#7A746B]">
 						Communities
 					</span>
 				</div>

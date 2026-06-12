@@ -279,25 +279,25 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 					</h2>
 
 					{intentLabel && (
-						<div className="mt-8 inline-flex items-start gap-3 rounded-xl bg-white/5 border border-white/12 px-4 py-3 text-[14px] text-white/75 max-w-full">
+						<div className="mt-8 inline-flex items-start gap-3 rounded-xl bg-white border border-charcoal/10 px-4 py-3 text-[14px] text-charcoal/75 max-w-full">
 							<span
 								aria-hidden="true"
-								className="text-white/55 text-[15px] leading-[1.4] shrink-0"
+								className="text-charcoal/50 text-[15px] leading-[1.4] shrink-0"
 							>
 								↩
 							</span>
 							<span className="min-w-0 leading-[1.4]">
 								Continuing to{" "}
-								<span className="text-white font-semibold">
+								<span className="text-charcoal font-semibold">
 									{intentLabel}
 								</span>
 							</span>
 						</div>
 					)}
 
-					<p className="mt-6 text-[16px] leading-[1.55] text-white/65 max-w-[420px]">
+					<p className="mt-6 text-[16px] leading-[1.55] text-[#4A463F] max-w-[420px]">
 						We sent a 6-digit code to{" "}
-						<span className="text-white font-semibold">
+						<span className="text-charcoal font-semibold">
 							{maskPhone(phone)}
 						</span>{" "}
 						<button
@@ -336,10 +336,10 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 								<InputOTPSlot
 									key={i}
 									index={i}
-									className={`h-16 w-[3.35rem] rounded-xl border bg-white/[0.04] text-white text-2xl font-semibold first:rounded-xl last:rounded-xl ${
+									className={`h-16 w-[3.35rem] rounded-xl border bg-white text-charcoal text-2xl font-semibold first:rounded-xl last:rounded-xl ${
 										uiState === "too-many-tries"
-											? "border-red-400/40 bg-red-500/[0.07] text-white/40"
-											: "border-white/18"
+											? "border-red-400/50 bg-red-50 text-charcoal/40"
+											: "border-charcoal/15"
 									}`}
 								/>
 							))}
@@ -387,12 +387,12 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 					)}
 
 					{uiState === "entry" && otpError && (
-						<p className="mt-3 text-sm text-red-400" role="alert">
+						<p className="mt-3 text-sm text-red-600" role="alert">
 							{otpError}
 						</p>
 					)}
 
-					<div className="mt-6 flex items-center justify-between gap-4 text-[14px] text-white/55">
+					<div className="mt-6 flex items-center justify-between gap-4 text-[14px] text-charcoal/60">
 						{canRequestNewCode ? (
 							<button
 								type="button"
@@ -410,7 +410,7 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 							</span>
 						)}
 
-						<span className="font-mono uppercase tracking-[0.22em] text-[10px] text-white/35">
+						<span className="font-mono uppercase tracking-[0.22em] text-[10px] text-[#7A746B]">
 							Paste-friendly
 						</span>
 					</div>
@@ -420,7 +420,7 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 						disabled={
 							otp.length !== OTP_LENGTH || submitting || isPaused
 						}
-						className="mt-7 w-full inline-flex items-center justify-center gap-2 h-14 rounded-full text-[16.5px] font-semibold transition-colors bg-orange text-white enabled:hover:bg-orange/90 disabled:bg-white/8 disabled:text-white/35 disabled:cursor-not-allowed"
+						className="mt-7 w-full inline-flex items-center justify-center gap-2 h-14 rounded-full text-[16.5px] font-semibold transition-colors bg-orange text-white enabled:hover:bg-orange/90 disabled:bg-charcoal/8 disabled:text-charcoal/35 disabled:cursor-not-allowed"
 					>
 						<span>{submitting ? "Verifying…" : "Verify code"}</span>
 					</button>
@@ -443,20 +443,20 @@ function OtpStatusPanel({
 }) {
 	const classes =
 		tone === "amber"
-			? "border-amber/45 bg-amber/15 text-amber"
-			: "border-red-500/45 bg-red-500/15 text-red-300";
+			? "border-amber/45 bg-amber/10 text-amber"
+			: "border-red-500/40 bg-red-50 text-red-700";
 
 	return (
 		<div
 			role="alert"
 			className={`mt-5 flex gap-3 rounded-xl border px-4 py-4 ${classes}`}
 		>
-			<div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/10">
+			<div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/70">
 				{icon}
 			</div>
 			<div className="min-w-0 text-[14px] leading-[1.45]">
-				<p className="font-semibold text-white">{title}</p>
-				<p className="mt-1 text-white/75">{body}</p>
+				<p className="font-semibold text-charcoal">{title}</p>
+				<p className="mt-1 text-charcoal/70">{body}</p>
 			</div>
 		</div>
 	);
@@ -484,7 +484,7 @@ function VerifiedState({ otp }: { otp: string }) {
 				</span>
 			</h2>
 
-			<p className="mt-6 text-[16px] leading-[1.55] text-white/65 max-w-[360px]">
+			<p className="mt-6 text-[16px] leading-[1.55] text-[#4A463F] max-w-[360px]">
 				Code confirmed. Taking you to your space...
 			</p>
 
@@ -492,7 +492,7 @@ function VerifiedState({ otp }: { otp: string }) {
 				{digits.map((digit, index) => (
 					<div
 						key={`${digit}-${index}`}
-						className="flex h-16 w-[3.35rem] shrink-0 items-center justify-center rounded-xl border border-green bg-green/10 text-2xl font-semibold text-white"
+						className="flex h-16 w-[3.35rem] shrink-0 items-center justify-center rounded-xl border border-green bg-green/10 text-2xl font-semibold text-charcoal"
 					>
 						{digit}
 					</div>

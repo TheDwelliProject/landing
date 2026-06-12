@@ -102,7 +102,9 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 		setPhone(stored);
 		// Seed the resend cooldown from the timestamp the backend returned when
 		// the code was requested, instead of guessing a flat window.
-		const wait = secondsUntil(sessionStorage.getItem(RESEND_AVAILABLE_AT_KEY));
+		const wait = secondsUntil(
+			sessionStorage.getItem(RESEND_AVAILABLE_AT_KEY),
+		);
 		if (wait !== null) setSecondsLeft(wait);
 	}, [router, searchParams, setSecondsLeft]);
 
@@ -123,7 +125,8 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 
 	async function verify() {
 		if (inFlightRef.current) return;
-		if (!phone || otp.length !== OTP_LENGTH || isPaused || isVerified) return;
+		if (!phone || otp.length !== OTP_LENGTH || isPaused || isVerified)
+			return;
 		inFlightRef.current = true;
 		setSubmitting(true);
 		setOtpError(null);
@@ -138,7 +141,9 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 					phone,
 					otp,
 					device_label: deriveDeviceLabel(
-						typeof navigator === "undefined" ? null : navigator.userAgent,
+						typeof navigator === "undefined"
+							? null
+							: navigator.userAgent,
 					),
 				}),
 				skipRefresh: true,
@@ -216,7 +221,8 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 				);
 			}
 			setSecondsLeft(
-				secondsUntil(data?.resend_available_at) ?? RESEND_FALLBACK_SECONDS,
+				secondsUntil(data?.resend_available_at) ??
+					RESEND_FALLBACK_SECONDS,
 			);
 			invalidAttemptsRef.current = 0;
 			setState("entry");
@@ -344,7 +350,10 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 						<OtpStatusPanel
 							tone="amber"
 							icon={
-								<AlertTriangle className="h-4 w-4" aria-hidden="true" />
+								<AlertTriangle
+									className="h-4 w-4"
+									aria-hidden="true"
+								/>
 							}
 							title={
 								rateLimitedBy === "verify"
@@ -362,7 +371,12 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 					{uiState === "too-many-tries" && (
 						<OtpStatusPanel
 							tone="red"
-							icon={<CircleX className="h-4 w-4" aria-hidden="true" />}
+							icon={
+								<CircleX
+									className="h-4 w-4"
+									aria-hidden="true"
+								/>
+							}
 							title="Too many incorrect tries"
 							body={
 								canRequestNewCode
@@ -403,7 +417,9 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 
 					<button
 						type="submit"
-						disabled={otp.length !== OTP_LENGTH || submitting || isPaused}
+						disabled={
+							otp.length !== OTP_LENGTH || submitting || isPaused
+						}
 						className="mt-7 w-full inline-flex items-center justify-center gap-2 h-14 rounded-full text-[16.5px] font-semibold transition-colors bg-orange text-white enabled:hover:bg-orange/90 disabled:bg-white/8 disabled:text-white/35 disabled:cursor-not-allowed"
 					>
 						<span>{submitting ? "Verifying…" : "Verify code"}</span>

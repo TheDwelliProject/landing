@@ -1,9 +1,9 @@
 import { AuthProvider } from "@/lib/auth/context";
 
 export default function SuperadminLayout({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-  return <AuthProvider>{children}</AuthProvider>;
+	return <AuthProvider>{children}</AuthProvider>;
 }

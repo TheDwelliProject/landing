@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import parsePhoneNumber from "libphonenumber-js/max";
 
-const PROFILE_PHONE_KEY = "dwelli_profile_phone";
+import { PROFILE_PHONE_KEY } from "@/lib/auth/storage";
 
 /**
  * The phone the user just verified, shown in the onboarding header so a

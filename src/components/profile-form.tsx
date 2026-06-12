@@ -9,8 +9,7 @@ import { apiFetch } from "@/lib/api";
 import { applyError } from "@/lib/auth/errors";
 import { safeReturnTo } from "@/lib/auth/return-to";
 import { profileSchema, type ProfileInput } from "@/lib/auth/schemas";
-
-const PROFILE_PHONE_KEY = "dwelli_profile_phone";
+import { PROFILE_PHONE_KEY } from "@/lib/auth/storage";
 
 export function ProfileForm() {
   const router = useRouter();

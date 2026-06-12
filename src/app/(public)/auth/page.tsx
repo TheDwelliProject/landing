@@ -49,17 +49,17 @@ export default async function SignInPage({
 	const reasonCopy = reasonNotice ? REASON_COPY[reasonNotice] : undefined;
 
 	return (
-		<div className="min-h-screen bg-charcoal text-white flex flex-col">
+		<div className="min-h-screen bg-background text-charcoal flex flex-col">
 			<Container as="header" className="pt-7">
 				<div className="flex items-center gap-3">
 					<Link href="/" className="flex items-center">
 						<Logo
 							size={22}
-							variant="white-on-orange"
-							wordmarkClassName="text-[18px] text-white"
+							variant="orange"
+							wordmarkClassName="text-[18px] text-charcoal"
 						/>
 					</Link>
-					<span className="font-mono uppercase tracking-[0.16em] text-[10px] text-white/45">
+					<span className="font-mono uppercase tracking-[0.16em] text-[10px] text-[#7A746B]">
 						Communities
 					</span>
 				</div>
@@ -83,22 +83,22 @@ export default async function SignInPage({
 							.
 						</h1>
 
-						<p className="mt-6 text-[16px] leading-[1.55] text-white/65 max-w-[420px]">
+						<p className="mt-6 text-[16px] leading-[1.55] text-[#4A463F] max-w-[420px]">
 							We&rsquo;ll text you a six-digit code. No passwords
 							to remember, ever.
 						</p>
 
 						{intentLabel && (
-							<div className="mt-8 inline-flex items-start gap-3 rounded-xl bg-white/5 border border-white/12 px-4 py-3 text-[14px] text-white/75 max-w-full">
+							<div className="mt-8 inline-flex items-start gap-3 rounded-xl bg-white border border-charcoal/10 px-4 py-3 text-[14px] text-charcoal/75 max-w-full">
 								<span
 									aria-hidden="true"
-									className="text-white/55 text-[15px] leading-[1.4] shrink-0"
+									className="text-charcoal/50 text-[15px] leading-[1.4] shrink-0"
 								>
 									↩
 								</span>
 								<span className="min-w-0 leading-[1.4]">
 									Continuing to{" "}
-									<span className="text-white font-semibold">
+									<span className="text-charcoal font-semibold">
 										{intentLabel}
 									</span>
 								</span>
@@ -110,15 +110,15 @@ export default async function SignInPage({
 								role="alert"
 								className={`mt-8 rounded-xl border px-4 py-3 ${
 									reasonCopy.tone === "danger"
-										? "border-red-400/40 bg-red-500/10"
-										: "border-white/12 bg-white/5"
+										? "border-red-500/30 bg-red-50"
+										: "border-charcoal/10 bg-white"
 								}`}
 							>
 								<p
 									className={`text-[13px] font-semibold ${
 										reasonCopy.tone === "danger"
-											? "text-red-200"
-											: "text-white/85"
+											? "text-red-700"
+											: "text-charcoal/85"
 									}`}
 								>
 									{reasonCopy.title}
@@ -126,8 +126,8 @@ export default async function SignInPage({
 								<p
 									className={`mt-1 text-[13px] leading-[1.5] ${
 										reasonCopy.tone === "danger"
-											? "text-red-100/85"
-											: "text-white/65"
+											? "text-red-600"
+											: "text-charcoal/65"
 									}`}
 								>
 									{reasonCopy.body}
@@ -139,18 +139,18 @@ export default async function SignInPage({
 							<SignInForm />
 						</Suspense>
 
-						<p className="mt-7 font-mono uppercase tracking-[0.16em] text-[10px] text-white/40">
+						<p className="mt-7 font-mono uppercase tracking-[0.16em] text-[10px] text-[#7A746B]">
 							By continuing you agree to our{" "}
 							<Link
 								href="#terms"
-								className="text-white/70 hover:text-white"
+								className="text-charcoal/80 hover:text-charcoal"
 							>
 								terms
 							</Link>{" "}
 							&amp;{" "}
 							<Link
 								href="#privacy"
-								className="text-white/70 hover:text-white"
+								className="text-charcoal/80 hover:text-charcoal"
 							>
 								privacy
 							</Link>

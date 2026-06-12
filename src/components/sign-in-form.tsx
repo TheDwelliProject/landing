@@ -105,15 +105,15 @@ export function SignInForm() {
 		>
 			<label
 				htmlFor="phone"
-				className="block font-mono uppercase tracking-[0.16em] text-[10px] text-white/45 mb-3"
+				className="block font-mono uppercase tracking-[0.16em] text-[10px] text-[#7A746B] mb-3"
 			>
 				Phone number
 			</label>
 			<div
-				className={`dwelli-phone-input flex items-stretch bg-white/6 border rounded-2xl overflow-hidden transition-colors ${
+				className={`dwelli-phone-input flex items-stretch bg-white border rounded-2xl overflow-hidden transition-colors ${
 					phoneError
 						? "border-red-500/60"
-						: "border-white/12 focus-within:border-white/30"
+						: "border-charcoal/12 focus-within:border-charcoal/30"
 				}`}
 				onFocus={(e) => {
 					// Refocusing the row means "let me fix it" — hide the error until
@@ -198,7 +198,7 @@ export function SignInForm() {
 				<p
 					id="phone-error"
 					role="alert"
-					className="mt-2 text-sm text-red-400"
+					className="mt-2 text-sm text-red-600"
 				>
 					{phoneError}
 				</p>
@@ -207,7 +207,7 @@ export function SignInForm() {
 			<button
 				type="submit"
 				disabled={!isValid || isSubmitting}
-				className="mt-5 w-full inline-flex items-center justify-center gap-2 h-14 rounded-full text-[16.5px] font-semibold transition-colors bg-orange text-white enabled:hover:bg-orange/90 disabled:bg-white/8 disabled:text-white/35 disabled:cursor-not-allowed"
+				className="mt-5 w-full inline-flex items-center justify-center gap-2 h-14 rounded-full text-[16.5px] font-semibold transition-colors bg-orange text-white enabled:hover:bg-orange/90 disabled:bg-charcoal/8 disabled:text-charcoal/35 disabled:cursor-not-allowed"
 			>
 				<span>{isSubmitting ? "Sending…" : "Send me a code"}</span>
 				{!isSubmitting && (

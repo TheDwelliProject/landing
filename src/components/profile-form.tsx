@@ -61,7 +61,7 @@ export function ProfileForm() {
 		>
 			<label
 				htmlFor="name"
-				className="block font-mono uppercase tracking-[0.16em] text-[10px] text-white/50 mb-3"
+				className="block font-mono uppercase tracking-[0.16em] text-[10px] text-charcoal/55 mb-3"
 			>
 				Full name
 			</label>
@@ -75,22 +75,22 @@ export function ProfileForm() {
 				aria-describedby={nameError ? "name-error" : undefined}
 				disabled={submitting}
 				{...form.register("name")}
-				className={`w-full h-[58px] rounded-[13px] bg-white/[0.04] border px-4 text-[18px] text-white placeholder:text-white/30 focus:outline-none transition-colors ${
+				className={`w-full h-[58px] rounded-[13px] bg-white border px-4 text-[18px] text-charcoal placeholder:text-charcoal/35 focus:outline-none transition-colors ${
 					nameError
 						? "border-red-500/60"
-						: "border-white/14 focus:border-white/30"
+						: "border-charcoal/12 focus:border-charcoal/30"
 				}`}
 			/>
 
 			{nameError && (
-				<p id="name-error" className="mt-2 text-sm text-red-400">
+				<p id="name-error" className="mt-2 text-sm text-red-600">
 					{nameError}
 				</p>
 			)}
 
 			<label
 				htmlFor="email"
-				className="mt-5 block font-mono uppercase tracking-[0.16em] text-[10px] text-white/50 mb-3"
+				className="mt-5 block font-mono uppercase tracking-[0.16em] text-[10px] text-charcoal/55 mb-3"
 			>
 				Email address
 			</label>
@@ -103,15 +103,15 @@ export function ProfileForm() {
 				aria-describedby={emailError ? "email-error" : undefined}
 				disabled={submitting}
 				{...form.register("email")}
-				className={`w-full h-[58px] rounded-[13px] bg-white/[0.04] border px-4 text-[18px] text-white placeholder:text-white/30 focus:outline-none transition-colors ${
+				className={`w-full h-[58px] rounded-[13px] bg-white border px-4 text-[18px] text-charcoal placeholder:text-charcoal/35 focus:outline-none transition-colors ${
 					emailError
 						? "border-red-500/60"
-						: "border-white/14 focus:border-white/30"
+						: "border-charcoal/12 focus:border-charcoal/30"
 				}`}
 			/>
 
 			{emailError && (
-				<p id="email-error" className="mt-2 text-sm text-red-400">
+				<p id="email-error" className="mt-2 text-sm text-red-600">
 					{emailError}
 				</p>
 			)}
@@ -119,7 +119,7 @@ export function ProfileForm() {
 			<button
 				type="submit"
 				disabled={!isValid || submitting}
-				className="mt-5 w-full inline-flex items-center justify-center gap-2 h-[58px] rounded-[13px] text-[16.5px] font-semibold transition-colors bg-orange text-white enabled:hover:bg-orange/90 disabled:bg-white/8 disabled:text-white/40 disabled:cursor-not-allowed"
+				className="mt-5 w-full inline-flex items-center justify-center gap-2 h-[58px] rounded-[13px] text-[16.5px] font-semibold transition-colors bg-orange text-white enabled:hover:bg-orange/90 disabled:bg-charcoal/8 disabled:text-charcoal/35 disabled:cursor-not-allowed"
 			>
 				<span>{submitting ? "Saving…" : "Continue"}</span>
 				{!submitting && (

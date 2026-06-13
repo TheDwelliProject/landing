@@ -26,7 +26,7 @@ export function ProfilePhone() {
 	if (!phone) return null;
 
 	return (
-		<span className="font-mono text-[11px] tracking-[0.08em] text-white/45">
+		<span className="font-mono text-[11px] tracking-[0.08em] text-[#7A746B]">
 			{phone}
 		</span>
 	);

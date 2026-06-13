@@ -47,8 +47,8 @@ export default function CreateCommunityPage() {
 								</h1>
 
 								<p className="mt-6 text-[16px] leading-[1.55] text-white/65 max-w-[460px]">
-									The community-creation wizard lands here in a
-									later stage. For now this is the post-auth
+									The community-creation wizard lands here in
+									a later stage. For now this is the post-auth
 									destination for the &ldquo;List your
 									property&rdquo; CTA.
 								</p>

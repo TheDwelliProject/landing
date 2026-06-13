@@ -79,8 +79,8 @@ export default async function SignInPage({
 							</h1>
 
 							<p className="mt-6 text-[16px] leading-[1.55] text-[#4A463F] max-w-[420px]">
-								We&rsquo;ll text you a six-digit code. No passwords
-								to remember, ever.
+								We&rsquo;ll text you a six-digit code. No
+								passwords to remember, ever.
 							</p>
 
 							{reasonCopy && (

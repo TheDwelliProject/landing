@@ -82,8 +82,8 @@ export function SignInForm() {
 			} else {
 				sessionStorage.removeItem(RESEND_AVAILABLE_AT_KEY);
 			}
-			// Forward the whole querystring so intent / returnTo / future params all
-			// ride along automatically — no need to remember to add each new one here.
+			// Forward the whole querystring so returnTo / future params all ride
+			// along automatically — no need to remember to add each new one here.
 			const qs = searchParams.toString();
 			router.push(qs ? `/auth/verify?${qs}` : "/auth/verify");
 		} catch (err) {

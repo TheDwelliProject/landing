@@ -1,6 +1,6 @@
 import { AuthProvider } from "@/lib/auth/context";
 
-export default function AdminLayout({
+export default function AuthedLayout({
 	children,
 }: {
 	children: React.ReactNode;

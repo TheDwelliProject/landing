@@ -39,7 +39,7 @@ export default function Navbar() {
 					>
 						Sign in
 					</Link>
-					<CtaButton href="/auth?intent=list-property" size="sm">
+					<CtaButton href="/communities/create" size="sm">
 						List your property
 					</CtaButton>
 				</div>

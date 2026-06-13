@@ -57,7 +57,7 @@ Server-only env access lives in `src/lib/env.ts`.
 src/
   app/
     (public)/        # Marketing + /auth (sign-in, OTP)
-    (admin)/         # Authenticated resident/admin: /communities, /onboarding, /wizard
+    (authed)/        # Authenticated routes: /communities, /onboarding, /wizard
     (superadmin)/    # /admin surfaces, gated on the `superadmin` JWT claim
     api/             # BFF routes (auth refresh, /me, etc.)
   components/        # Shared UI + feature components (forms, navbar, footer)

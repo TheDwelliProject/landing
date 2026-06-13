@@ -61,11 +61,7 @@ function useCountdown(initialSeconds = 0) {
 	return [seconds, setSeconds] as const;
 }
 
-type OtpFormProps = {
-	intentLabel?: string;
-};
-
-export function OtpForm({ intentLabel }: OtpFormProps) {
+export function OtpForm() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const { refresh } = useAuth();
@@ -277,23 +273,6 @@ export function OtpForm({ intentLabel }: OtpFormProps) {
 						<br />
 						messages.
 					</h2>
-
-					{intentLabel && (
-						<div className="mt-8 inline-flex items-start gap-3 rounded-xl bg-white border border-charcoal/10 px-4 py-3 text-[14px] text-charcoal/75 max-w-full">
-							<span
-								aria-hidden="true"
-								className="text-charcoal/50 text-[15px] leading-[1.4] shrink-0"
-							>
-								↩
-							</span>
-							<span className="min-w-0 leading-[1.4]">
-								Continuing to{" "}
-								<span className="text-charcoal font-semibold">
-									{intentLabel}
-								</span>
-							</span>
-						</div>
-					)}
 
 					<p className="mt-6 text-[16px] leading-[1.55] text-[#4A463F] max-w-[420px]">
 						We sent a 6-digit code to{" "}

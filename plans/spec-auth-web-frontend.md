@@ -317,7 +317,7 @@ Use **Next.js middleware** (`middleware.ts`) to enforce route-group authorizatio
 | Group | Requires | Behaviour on failure |
 |---|---|---|
 | `(public)` | Nothing | n/a |
-| `(admin)` | Valid `dwelli_access` cookie | Redirect to `/auth?returnTo=<original-path>` |
+| `(authed)` | Valid `dwelli_access` cookie | Redirect to `/auth?returnTo=<original-path>` |
 | `(superadmin)` | Valid `dwelli_access` cookie AND `superadmin: true` claim | Redirect to `/communities` (not back to start; they're authed, just not authorised) |
 
 Middleware decodes the JWT (no backend call) to read claims. If the access cookie is missing or the JWT is malformed, treat as unauthenticated. If the JWT is *expired*, also treat as unauthenticated — the retry-with-refresh logic only runs in the data-fetch path, not in middleware. The user lands at `/auth`, signs in again, comes back via `returnTo`.

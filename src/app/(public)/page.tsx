@@ -46,7 +46,7 @@ export default function Home() {
 
 							<div className="mt-9 flex flex-wrap gap-3">
 								<CtaButton
-									href="/auth?intent=list-property"
+									href="/communities/create"
 									variant="primary"
 									size="md"
 								>
@@ -354,7 +354,7 @@ export default function Home() {
 								</ul>
 								<div className="mt-8">
 									<CtaButton
-										href="/auth?intent=list-property"
+										href="/communities/create"
 										variant="primary"
 										size="md"
 										fullWidth
@@ -385,7 +385,7 @@ export default function Home() {
 								</h2>
 								<div className="mt-9 flex justify-center">
 									<CtaButton
-										href="/auth?intent=list-property"
+										href="/communities/create"
 										variant="light"
 										size="md"
 										className="font-bold"

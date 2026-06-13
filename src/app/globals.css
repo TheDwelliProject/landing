@@ -81,3 +81,146 @@ body {
 	background: var(--background);
 	overflow-x: hidden;
 }
+
+/* ───────────────────────────────────────────────────────────────────────────
+ * Auth right-rail brand panel — port of the .ac-bp-* system from the design.
+ * Four overlapping animations: sonar rings, drifting tiles, breathing
+ * keyhole mark, and a slow spin on the keyhole shape itself.
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+.ac-bp-rings {
+	position: absolute;
+	top: 46%;
+	left: 50%;
+	width: 0;
+	height: 0;
+	pointer-events: none;
+}
+
+.ac-bp-ring {
+	position: absolute;
+	top: -230px;
+	left: -230px;
+	width: 460px;
+	height: 460px;
+	border-radius: 50%;
+	border: 1.25px solid rgba(255, 255, 255, 0.45);
+	transform-origin: center;
+	animation: ac-bp-sonar 7s ease-out infinite;
+}
+.ac-bp-ring:nth-child(2) {
+	animation-delay: 1.75s;
+}
+.ac-bp-ring:nth-child(3) {
+	animation-delay: 3.5s;
+}
+.ac-bp-ring:nth-child(4) {
+	animation-delay: 5.25s;
+}
+
+@keyframes ac-bp-sonar {
+	0% {
+		transform: scale(0.25);
+		opacity: 0.95;
+	}
+	45% {
+		opacity: 0.7;
+	}
+	75% {
+		opacity: 0.12;
+	}
+	90% {
+		opacity: 0.02;
+	}
+	100% {
+		transform: scale(1);
+		opacity: 0;
+	}
+}
+
+.ac-bp-tile {
+	position: absolute;
+	background: rgba(255, 255, 255, 0.16);
+	animation: ac-bp-drift ease-in-out infinite;
+}
+.ac-bp-tile1 {
+	top: 15.7%;
+	left: 15.9%;
+	width: 56px;
+	height: 56px;
+	border-radius: 14px;
+	animation-duration: 9s;
+}
+.ac-bp-tile2 {
+	top: 25.1%;
+	right: 17.9%;
+	width: 40px;
+	height: 40px;
+	border-radius: 11px;
+	animation-duration: 11s;
+	animation-delay: -2s;
+}
+.ac-bp-tile3 {
+	top: 70.9%;
+	left: 25.9%;
+	width: 30px;
+	height: 30px;
+	border-radius: 9px;
+	animation-duration: 8s;
+	animation-delay: -1s;
+}
+
+@keyframes ac-bp-drift {
+	0%,
+	100% {
+		transform: rotate(-3deg) translateY(0);
+	}
+	50% {
+		transform: rotate(3deg) translateY(-14px);
+	}
+}
+
+.ac-bp-mark {
+	position: absolute;
+	top: 46%;
+	left: 50%;
+	width: 124px;
+	height: 124px;
+	animation: ac-bp-breathe 5s ease-in-out infinite;
+}
+
+@keyframes ac-bp-breathe {
+	0%,
+	100% {
+		transform: translate(-50%, -50%) scale(1);
+	}
+	50% {
+		transform: translate(-50%, -50%) scale(1.06);
+	}
+}
+
+.ac-bp-hole {
+	transform-origin: 50px 52px;
+	animation: ac-bp-spin 18s linear infinite;
+}
+
+@keyframes ac-bp-spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ac-bp-ring,
+	.ac-bp-tile,
+	.ac-bp-mark,
+	.ac-bp-hole {
+		animation: none;
+	}
+	.ac-bp-mark {
+		transform: translate(-50%, -50%);
+	}
+}

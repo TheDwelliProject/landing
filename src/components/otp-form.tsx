@@ -36,6 +36,23 @@ const VERIFIED_REDIRECT_DELAY_MS = 950;
 const OTP_LENGTH = 6;
 
 type OtpState = "entry" | "rate-limited" | "too-many-tries" | "verified";
+type VerifyData = {
+	user_id: string;
+	is_new_user: boolean;
+	name: string | null;
+};
+
+export function verifiedRedirectPath(
+	data: Pick<VerifyData, "is_new_user" | "name">,
+	returnTo: string | null,
+): string {
+	if (data.is_new_user || data.name === null) {
+		return returnTo
+			? `/onboarding/profile?returnTo=${encodeURIComponent(returnTo)}`
+			: "/onboarding/profile";
+	}
+	return safeReturnTo(returnTo);
+}
 
 function maskPhone(phone: string): string {
 	if (phone.length <= 4) return phone;
@@ -127,11 +144,7 @@ export function OtpForm() {
 		setSubmitting(true);
 		setOtpError(null);
 		try {
-			const data = await apiFetch<{
-				user_id: string;
-				is_new_user: boolean;
-				name: string | null;
-			}>("/api/auth/verify", {
+			const data = await apiFetch<VerifyData>("/api/auth/verify", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
@@ -156,19 +169,7 @@ export function OtpForm() {
 				const returnTo = searchParams.get("returnTo");
 				// Brand-new account -> collect their name first. The returnTo hint
 				// rides along so the profile screen can resume the original journey.
-				console.log("checking...", {
-					i: data.is_new_user,
-					n: data.name,
-				});
-				if (data.is_new_user || !data.name) {
-					router.replace(
-						returnTo
-							? `/onboarding/profile?returnTo=${encodeURIComponent(returnTo)}`
-							: "/onboarding/profile",
-					);
-					return;
-				}
-				router.replace(safeReturnTo(returnTo));
+				router.replace(verifiedRedirectPath(data, returnTo));
 			}, VERIFIED_REDIRECT_DELAY_MS);
 		} catch (err) {
 			if (err instanceof ApiError && err.code === "invalid_otp") {

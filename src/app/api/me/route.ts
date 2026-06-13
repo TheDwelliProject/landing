@@ -36,7 +36,7 @@ export async function PATCH(request: NextRequest) {
 
 	try {
 		const data = await callBackend<{
-			user_id: string;
+			id: string;
 			name: string;
 			email: string;
 		}>("/v1/me", {
@@ -45,7 +45,7 @@ export async function PATCH(request: NextRequest) {
 			bearer: token,
 		});
 		return jsendSuccess({
-			user_id: data.user_id,
+			user_id: data.id,
 			name: data.name,
 			email: data.email,
 		});

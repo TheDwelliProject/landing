@@ -73,11 +73,11 @@ export default function Footer() {
 
 				<div className="mt-14 pt-6 border-t border-white/10 flex flex-col sm:flex-row gap-3 sm:justify-between text-xs text-white/45 font-mono">
 					<span>
-						© 2026 Dwelli Technologies Limited · 38 Baale Bus Stop,
-						Ipaja, Lagos
+						© 2026 Dwelli Technologies Limited · Lekki, Lagos,
+						Nigeria
 					</span>
 					<span className="uppercase tracking-[0.16em]">
-						Made in Lagos
+						Proton Concepts
 					</span>
 				</div>
 			</Container>

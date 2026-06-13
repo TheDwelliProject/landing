@@ -22,7 +22,6 @@ export default function ProfileCompletionPage() {
 							wordmarkClassName="text-[18px] text-charcoal"
 						/>
 					</Link>
-					<ProfilePhone />
 				</div>
 			</Container>
 
@@ -32,7 +31,7 @@ export default function ProfileCompletionPage() {
 						<div className="flex items-center gap-2 mb-7">
 							<span className="w-1.5 h-1.5 rounded-full bg-green" />
 							<span className="font-mono uppercase tracking-[0.16em] text-[11px] text-green">
-								Almost there · Profile details
+								Profile details
 							</span>
 						</div>
 
@@ -53,11 +52,6 @@ export default function ProfileCompletionPage() {
 						<Suspense fallback={null}>
 							<ProfileForm />
 						</Suspense>
-
-						<p className="mt-7 font-mono uppercase tracking-[0.16em] text-[10px] text-[#7A746B]">
-							You&rsquo;re signed in — you can finish this
-							anytime.
-						</p>
 					</div>
 				</Container>
 			</main>

@@ -12,14 +12,14 @@ export const metadata = {
 
 export default function ProfileCompletionPage() {
 	return (
-		<div className="min-h-screen bg-charcoal text-white flex flex-col">
+		<div className="min-h-screen bg-background text-charcoal flex flex-col [color-scheme:light]">
 			<Container as="header" className="pt-7">
 				<div className="flex items-center justify-between gap-3">
 					<Link href="/" className="flex items-center">
 						<Logo
 							size={22}
-							variant="white-on-orange"
-							wordmarkClassName="text-[18px] text-white"
+							variant="orange"
+							wordmarkClassName="text-[18px] text-charcoal"
 						/>
 					</Link>
 					<ProfilePhone />
@@ -45,7 +45,7 @@ export default function ProfileCompletionPage() {
 							</span>
 						</h1>
 
-						<p className="mt-6 text-[16px] leading-[1.55] text-white/60 max-w-[340px]">
+						<p className="mt-6 text-[16px] leading-[1.55] text-[#4A463F] max-w-[340px]">
 							Just your name and email so your team and residents
 							know who&rsquo;s who.
 						</p>
@@ -54,7 +54,7 @@ export default function ProfileCompletionPage() {
 							<ProfileForm />
 						</Suspense>
 
-						<p className="mt-7 font-mono uppercase tracking-[0.16em] text-[10px] text-white/30">
+						<p className="mt-7 font-mono uppercase tracking-[0.16em] text-[10px] text-[#7A746B]">
 							You&rsquo;re signed in — you can finish this
 							anytime.
 						</p>

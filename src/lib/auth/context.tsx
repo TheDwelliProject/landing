@@ -12,12 +12,17 @@ import {
 
 import { apiFetch, ApiError } from "@/lib/api";
 
-type MeResponse = { user_id: string; superadmin: boolean };
+type MeResponse = { user_id: string; superadmin: boolean; name: string | null };
 
 export type AuthState =
 	| { status: "unknown" }
 	| { status: "unauthenticated" }
-	| { status: "authenticated"; userID: string; superadmin: boolean };
+	| {
+			status: "authenticated";
+			userID: string;
+			superadmin: boolean;
+			name: string | null;
+	  };
 
 export type AuthContextValue = AuthState & {
 	refresh: () => Promise<void>;
@@ -40,6 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 				status: "authenticated",
 				userID: me.user_id,
 				superadmin: me.superadmin,
+				name: me.name,
 			});
 		} catch (err) {
 			if (err instanceof ApiError && err.status === 401) {

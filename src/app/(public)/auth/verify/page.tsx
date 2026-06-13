@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { AuthAnimationPanel } from "@/components/auth-animation-panel";
@@ -5,7 +6,7 @@ import { Container } from "@/components/container";
 import { Logo } from "@/components/logo";
 import { OtpForm } from "@/components/otp-form";
 
-export const metadata = {
+export const metadata: Metadata = {
 	title: "Enter your code — Dwelli",
 	description:
 		"We just texted you a six-digit code. Enter it to finish signing in.",

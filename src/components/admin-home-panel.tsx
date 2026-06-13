@@ -33,7 +33,9 @@ export function AdminHomePanel() {
 			<p className="font-mono uppercase tracking-[0.16em] text-[10px] text-white/45 mb-2">
 				Signed in as
 			</p>
-			<p className="text-[15px] text-white/90 break-all">{auth.userID}</p>
+			<p className="text-[15px] text-white/90 break-all">
+				{auth.name ? auth.name : auth.userID}
+			</p>
 			{auth.superadmin && (
 				<p className="mt-2 text-[12px] text-orange font-mono uppercase tracking-[0.16em]">
 					Superadmin

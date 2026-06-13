@@ -3,9 +3,9 @@ import { Suspense } from "react";
 import { Container } from "@/components/container";
 import { Logo } from "@/components/logo";
 import { ProfileForm } from "@/components/profile-form";
-import { ProfilePhone } from "@/components/profile-phone";
+import { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
 	title: "Set up your profile — Dwelli",
 	description: "One last step — your name and email — and you're all set.",
 };

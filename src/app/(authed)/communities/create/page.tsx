@@ -3,8 +3,9 @@ import { Suspense } from "react";
 import { Container } from "@/components/container";
 import { Logo } from "@/components/logo";
 import { RequireAuth } from "@/components/require-auth";
+import { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
 	title: "List your property — Dwelli",
 };
 

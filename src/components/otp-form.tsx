@@ -129,7 +129,8 @@ export function OtpForm() {
 		try {
 			const data = await apiFetch<{
 				user_id: string;
-				is_new_user?: boolean;
+				is_new_user: boolean;
+				name: string | null;
 			}>("/api/auth/verify", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
@@ -155,7 +156,11 @@ export function OtpForm() {
 				const returnTo = searchParams.get("returnTo");
 				// Brand-new account -> collect their name first. The returnTo hint
 				// rides along so the profile screen can resume the original journey.
-				if (data?.is_new_user) {
+				console.log("checking...", {
+					i: data.is_new_user,
+					n: data.name,
+				});
+				if (data.is_new_user || !data.name) {
 					router.replace(
 						returnTo
 							? `/onboarding/profile?returnTo=${encodeURIComponent(returnTo)}`

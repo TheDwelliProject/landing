@@ -12,7 +12,11 @@ import { verifyBodySchema } from "@/lib/auth/schemas";
 
 export const runtime = "nodejs";
 
-type VerifyResponse = TokenPair & { user_id: string; is_new_user?: boolean };
+type VerifyResponse = TokenPair & {
+	user_id: string;
+	is_new_user: boolean;
+	name: string | null;
+};
 
 export async function POST(request: NextRequest) {
 	let raw: unknown;
@@ -43,6 +47,7 @@ export async function POST(request: NextRequest) {
 		const response = jsendSuccess({
 			user_id: data.user_id,
 			is_new_user: data.is_new_user === true,
+			name: data.name,
 		});
 		setAuthCookies(response, data);
 		return response;

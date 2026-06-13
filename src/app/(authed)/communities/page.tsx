@@ -2,8 +2,9 @@ import Link from "next/link";
 import { Container } from "@/components/container";
 import { Logo } from "@/components/logo";
 import { AdminHomePanel } from "@/components/admin-home-panel";
+import { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
 	title: "Communities — Dwelli",
 };
 

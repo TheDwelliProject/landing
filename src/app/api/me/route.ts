@@ -35,15 +35,20 @@ export async function PATCH(request: NextRequest) {
 	}
 
 	try {
-		const data = await callBackend<{ user_id: string; name: string }>(
-			"/v1/me",
-			{
-				method: "PATCH",
-				body: parsed.data,
-				bearer: token,
-			},
-		);
-		return jsendSuccess({ user_id: data.user_id, name: data.name });
+		const data = await callBackend<{
+			user_id: string;
+			name: string;
+			email: string;
+		}>("/v1/me", {
+			method: "PATCH",
+			body: parsed.data,
+			bearer: token,
+		});
+		return jsendSuccess({
+			user_id: data.user_id,
+			name: data.name,
+			email: data.email,
+		});
 	} catch (err) {
 		return mapBackendError(err);
 	}

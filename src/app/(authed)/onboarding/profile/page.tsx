@@ -6,8 +6,8 @@ import { ProfileForm } from "@/components/profile-form";
 import { ProfilePhone } from "@/components/profile-phone";
 
 export const metadata = {
-	title: "What should we call you? — Dwelli",
-	description: "One last detail — your name — and you're all set.",
+	title: "Set up your profile — Dwelli",
+	description: "One last step — your name and email — and you're all set.",
 };
 
 export default function ProfileCompletionPage() {
@@ -32,23 +32,22 @@ export default function ProfileCompletionPage() {
 						<div className="flex items-center gap-2 mb-7">
 							<span className="w-1.5 h-1.5 rounded-full bg-green" />
 							<span className="font-mono uppercase tracking-[0.16em] text-[11px] text-green">
-								Almost there · One detail
+								Almost there · Profile details
 							</span>
 						</div>
 
 						<h1 className="font-display font-extrabold tracking-[-0.04em] leading-[1.02] text-[clamp(2.25rem,5vw,2.75rem)]">
-							What should
+							Let&rsquo;s set up
 							<br />
-							we call{" "}
+							your{" "}
 							<span className="font-serif font-normal italic tracking-tight">
-								you
+								profile
 							</span>
-							?
 						</h1>
 
 						<p className="mt-6 text-[16px] leading-[1.55] text-white/60 max-w-[340px]">
-							Just your name — so your team and residents know
-							who&rsquo;s who.
+							Just your name and email so your team and residents
+							know who&rsquo;s who.
 						</p>
 
 						<Suspense fallback={null}>

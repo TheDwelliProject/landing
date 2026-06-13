@@ -26,6 +26,11 @@ export const profileSchema = z.object({
 		.trim()
 		.min(2, "Please enter your full name")
 		.max(120, "That name looks a little long"),
+	email: z
+		.string()
+		.trim()
+		.email("Please enter a valid email address")
+		.max(254, "That email looks a little long"),
 });
 export type ProfileInput = z.infer<typeof profileSchema>;
 

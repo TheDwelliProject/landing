@@ -18,13 +18,15 @@ export function ProfileForm() {
 
 	const form = useForm<ProfileInput>({
 		resolver: zodResolver(profileSchema),
-		defaultValues: { name: "" },
+		defaultValues: { name: "", email: "" },
 		mode: "onChange",
 	});
 
 	const name = useWatch({ control: form.control, name: "name" });
+	const email = useWatch({ control: form.control, name: "email" });
 	const nameError = form.formState.errors.name?.message;
-	const isValid = form.formState.isValid && !!name?.trim();
+	const emailError = form.formState.errors.email?.message;
+	const isValid = form.formState.isValid && !!name?.trim() && !!email?.trim();
 
 	async function onSubmit(values: ProfileInput) {
 		setSubmitting(true);
@@ -32,7 +34,10 @@ export function ProfileForm() {
 			await apiFetch("/api/me", {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ name: values.name.trim() }),
+				body: JSON.stringify({
+					name: values.name.trim(),
+					email: values.email.trim(),
+				}),
 			});
 			sessionStorage.removeItem(PROFILE_PHONE_KEY);
 			// Profile complete — resume the journey the user was on before auth
@@ -41,7 +46,7 @@ export function ProfileForm() {
 		} catch (err) {
 			applyError(err, {
 				setError: form.setError,
-				fieldMap: { validation_failed: "name" },
+				fieldMap: { validation_failed: "email" },
 			});
 			setSubmitting(false);
 		}
@@ -80,6 +85,34 @@ export function ProfileForm() {
 			{nameError && (
 				<p id="name-error" className="mt-2 text-sm text-red-400">
 					{nameError}
+				</p>
+			)}
+
+			<label
+				htmlFor="email"
+				className="mt-5 block font-mono uppercase tracking-[0.16em] text-[10px] text-white/50 mb-3"
+			>
+				Email address
+			</label>
+			<input
+				id="email"
+				type="email"
+				autoComplete="email"
+				placeholder="you@example.com"
+				aria-invalid={emailError ? "true" : "false"}
+				aria-describedby={emailError ? "email-error" : undefined}
+				disabled={submitting}
+				{...form.register("email")}
+				className={`w-full h-[58px] rounded-[13px] bg-white/[0.04] border px-4 text-[18px] text-white placeholder:text-white/30 focus:outline-none transition-colors ${
+					emailError
+						? "border-red-500/60"
+						: "border-white/14 focus:border-white/30"
+				}`}
+			/>
+
+			{emailError && (
+				<p id="email-error" className="mt-2 text-sm text-red-400">
+					{emailError}
 				</p>
 			)}
 

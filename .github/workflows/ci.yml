@@ -65,7 +65,7 @@ jobs:
               env:
                   OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
                   RAILWAY_PROJECT_ID: "op://Dwelli/Staging Creds/RAILWAY_PROJECT_ID"
-                  RAILWAY_STAGING_SERVICE_ID: "op://Dwelli/Staging Creds/LANDING_RAILWAY_SERVICE_ID"
+                  RAILWAY_STAGING_SERVICE_ID: "op://Dwelli/Staging Creds/LANDING_SERVICE_ID"
                   RAILWAY_STAGING_TOKEN: "op://Dwelli/Staging Creds/RAILWAY_TOKEN"
 
             - name: Deploy to Railway

@@ -1,4 +1,4 @@
-import { NextResponse, type NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 
 import { BackendError, callBackend } from "@/lib/auth/backend";
 import {
@@ -7,6 +7,7 @@ import {
 	setAuthCookies,
 	type TokenPair,
 } from "@/lib/auth/cookies";
+import { redirectToSameOrigin } from "@/lib/auth/redirect";
 import { safeReturnTo } from "@/lib/auth/return-to";
 import {
 	jsendError,
@@ -58,7 +59,7 @@ export async function GET(request: NextRequest) {
 	const refreshToken = request.cookies.get(REFRESH_COOKIE)?.value;
 
 	if (!refreshToken) {
-		const response = redirectToAuth(request, returnTo);
+		const response = redirectToAuth(returnTo);
 		clearAuthCookies(response);
 		return response;
 	}
@@ -69,13 +70,12 @@ export async function GET(request: NextRequest) {
 			body: { refresh_token: refreshToken },
 		});
 
-		const response = NextResponse.redirect(new URL(returnTo, request.url));
+		const response = redirectToSameOrigin(returnTo);
 		setAuthCookies(response, data);
 		return response;
 	} catch (err) {
 		if (shouldClearAuthCookies(err)) {
 			const response = redirectToAuth(
-				request,
 				returnTo,
 				reasonForRefreshFailure(err),
 			);
@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
 			return response;
 		}
 
-		return redirectToAuth(request, returnTo);
+		return redirectToAuth(returnTo);
 	}
 }
 
@@ -106,12 +106,10 @@ function reasonForRefreshFailure(
 }
 
 function redirectToAuth(
-	request: NextRequest,
 	returnTo: string,
 	reason?: "session-compromised" | "session-expired",
 ) {
-	const url = new URL("/auth", request.url);
-	url.searchParams.set("returnTo", returnTo);
-	if (reason) url.searchParams.set("reason", reason);
-	return NextResponse.redirect(url);
+	const params = new URLSearchParams({ returnTo });
+	if (reason) params.set("reason", reason);
+	return redirectToSameOrigin(`/auth?${params.toString()}`);
 }

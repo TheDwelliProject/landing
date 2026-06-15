@@ -54,17 +54,17 @@ export async function proxy(request: NextRequest) {
 
 	if (group === "admin") {
 		if (!claims) {
-			return redirectToRefresh(pathname + search);
+			return redirectToRefresh(request, pathname + search);
 		}
 		return NextResponse.next();
 	}
 
 	// group === "superadmin"
 	if (!claims) {
-		return redirectToRefresh(pathname + search);
+		return redirectToRefresh(request, pathname + search);
 	}
 	if (!claims.superadmin) {
-		return redirectToSameOrigin("/communities");
+		return redirectToSameOrigin(request, "/communities");
 	}
 	return NextResponse.next();
 }
@@ -79,9 +79,12 @@ async function verifyOrNull(token: string | undefined) {
 	}
 }
 
-function redirectToRefresh(returnTo: string) {
+function redirectToRefresh(request: NextRequest, returnTo: string) {
 	const params = new URLSearchParams({ returnTo });
-	return redirectToSameOrigin(`/api/auth/refresh?${params.toString()}`);
+	return redirectToSameOrigin(
+		request,
+		`/api/auth/refresh?${params.toString()}`,
+	);
 }
 
 export const config = {

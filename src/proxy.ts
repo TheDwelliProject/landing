@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { ACCESS_COOKIE } from "@/lib/auth/cookie-names";
 import { JwtVerifierUnavailableError, verifyAccessJwt } from "@/lib/auth/jwt";
+import { redirectToSameOrigin } from "@/lib/auth/redirect";
 
 const ADMIN_PREFIXES = [
 	"/communities",
@@ -53,20 +54,17 @@ export async function proxy(request: NextRequest) {
 
 	if (group === "admin") {
 		if (!claims) {
-			return redirectToRefresh(request, pathname + search);
+			return redirectToRefresh(pathname + search);
 		}
 		return NextResponse.next();
 	}
 
 	// group === "superadmin"
 	if (!claims) {
-		return redirectToRefresh(request, pathname + search);
+		return redirectToRefresh(pathname + search);
 	}
 	if (!claims.superadmin) {
-		const url = request.nextUrl.clone();
-		url.pathname = "/communities";
-		url.search = "";
-		return NextResponse.redirect(url);
+		return redirectToSameOrigin("/communities");
 	}
 	return NextResponse.next();
 }
@@ -81,11 +79,9 @@ async function verifyOrNull(token: string | undefined) {
 	}
 }
 
-function redirectToRefresh(request: NextRequest, returnTo: string) {
-	const url = request.nextUrl.clone();
-	url.pathname = "/api/auth/refresh";
-	url.search = `?returnTo=${encodeURIComponent(returnTo)}`;
-	return NextResponse.redirect(url);
+function redirectToRefresh(returnTo: string) {
+	const params = new URLSearchParams({ returnTo });
+	return redirectToSameOrigin(`/api/auth/refresh?${params.toString()}`);
 }
 
 export const config = {

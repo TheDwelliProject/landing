@@ -50,8 +50,8 @@ describe("redirectToSameOrigin", () => {
 		expect(() =>
 			redirectToSameOrigin(request, "/\n/example.com/auth"),
 		).toThrow("same-origin redirects");
-		expect(() =>
-			redirectToSameOrigin(request, "/\t/example.com"),
-		).toThrow("same-origin redirects");
+		expect(() => redirectToSameOrigin(request, "/\t/example.com")).toThrow(
+			"same-origin redirects",
+		);
 	});
 });

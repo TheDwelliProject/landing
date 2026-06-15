@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
 	const refreshToken = request.cookies.get(REFRESH_COOKIE)?.value;
 
 	if (!refreshToken) {
-		const response = redirectToAuth(returnTo);
+		const response = redirectToAuth(request, returnTo);
 		clearAuthCookies(response);
 		return response;
 	}
@@ -70,12 +70,13 @@ export async function GET(request: NextRequest) {
 			body: { refresh_token: refreshToken },
 		});
 
-		const response = redirectToSameOrigin(returnTo);
+		const response = redirectToSameOrigin(request, returnTo);
 		setAuthCookies(response, data);
 		return response;
 	} catch (err) {
 		if (shouldClearAuthCookies(err)) {
 			const response = redirectToAuth(
+				request,
 				returnTo,
 				reasonForRefreshFailure(err),
 			);
@@ -83,7 +84,7 @@ export async function GET(request: NextRequest) {
 			return response;
 		}
 
-		return redirectToAuth(returnTo);
+		return redirectToAuth(request, returnTo);
 	}
 }
 
@@ -106,10 +107,11 @@ function reasonForRefreshFailure(
 }
 
 function redirectToAuth(
+	request: NextRequest,
 	returnTo: string,
 	reason?: "session-compromised" | "session-expired",
 ) {
 	const params = new URLSearchParams({ returnTo });
 	if (reason) params.set("reason", reason);
-	return redirectToSameOrigin(`/auth?${params.toString()}`);
+	return redirectToSameOrigin(request, `/auth?${params.toString()}`);
 }

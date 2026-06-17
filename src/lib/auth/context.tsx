@@ -17,6 +17,7 @@ type MeResponse = { user_id: string; superadmin: boolean; name: string | null };
 export type AuthState =
 	| { status: "unknown" }
 	| { status: "unauthenticated" }
+	| { status: "error"; message: string }
 	| {
 			status: "authenticated";
 			userID: string;
@@ -52,7 +53,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 				setState({ status: "unauthenticated" });
 				return;
 			}
-			setState({ status: "unauthenticated" });
+			// Infrastructure failures — a network blip, a 503 from the
+			// jwt-verifier-unavailable path, any 5xx — must NOT masquerade as a
+			// signed-out session. Leave a resolved session intact; otherwise surface
+			// the failure so protected UI does not sit in the initial loading state.
+			setState((prev) =>
+				prev.status === "authenticated"
+					? prev
+					: {
+							status: "error",
+							message:
+								"Authentication is temporarily unavailable. Please try again.",
+						},
+			);
 		}
 	}, []);
 

@@ -10,6 +10,10 @@ import {
 import { redirectToSameOrigin } from "@/lib/auth/redirect";
 import { safeReturnTo } from "@/lib/auth/return-to";
 import {
+	codeToSessionReason,
+	type SessionReason,
+} from "@/lib/auth/session-reason";
+import {
 	jsendError,
 	jsendSuccess,
 	mapBackendError,
@@ -54,6 +58,12 @@ export async function POST(request: NextRequest) {
 	}
 }
 
+// The GET form exists for the middleware-driven silent refresh: `proxy.ts`
+// redirects an expired-but-refreshable session here, and a browser navigation
+// cannot be redirected to a POST. Rotating tokens on GET is safe because the
+// refresh cookie is `SameSite=Strict` (never sent on cross-site navigations, so
+// it can't be triggered by another origin) and a rotation is self-healing — the
+// response sets the new cookie pair before redirecting back to `returnTo`.
 export async function GET(request: NextRequest) {
 	const returnTo = safeReturnTo(request.nextUrl.searchParams.get("returnTo"));
 	const refreshToken = request.cookies.get(REFRESH_COOKIE)?.value;
@@ -97,19 +107,15 @@ function shouldClearAuthCookies(err: unknown): boolean {
 	);
 }
 
-function reasonForRefreshFailure(
-	err: unknown,
-): "session-compromised" | "session-expired" | undefined {
+function reasonForRefreshFailure(err: unknown): SessionReason | undefined {
 	if (!(err instanceof BackendError)) return undefined;
-	if (err.code === "refresh_token_reuse") return "session-compromised";
-	if (err.code === "refresh_token_expired") return "session-expired";
-	return undefined;
+	return codeToSessionReason(err.code);
 }
 
 function redirectToAuth(
 	request: NextRequest,
 	returnTo: string,
-	reason?: "session-compromised" | "session-expired",
+	reason?: SessionReason,
 ) {
 	const params = new URLSearchParams({ returnTo });
 	if (reason) params.set("reason", reason);

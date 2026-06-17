@@ -7,8 +7,9 @@ import type {
 } from "react-hook-form";
 
 import { ApiError, NetworkError } from "@/lib/api";
+import type { SessionReason } from "@/lib/auth/session-reason";
 
-export type SessionReason = "session-compromised" | "session-expired";
+export type { SessionReason };
 
 export type ErrorBehavior =
 	| { kind: "inline"; field: string; message: string }

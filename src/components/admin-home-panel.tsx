@@ -1,25 +1,43 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { useAuth } from "@/lib/auth/context";
 
 export function AdminHomePanel() {
 	const router = useRouter();
+	const pathname = usePathname();
 	const auth = useAuth();
 	const [signingOut, setSigningOut] = useState(false);
 
-	if (auth.status === "unknown") {
+	// These pages aren't wrapped in <RequireAuth>, so if the client session
+	// resolves to unauthenticated (cookie expired or refresh failed since the
+	// middleware pass) we send the user to sign in rather than leaving a
+	// dead-end page with no way forward.
+	const unauthenticated = auth.status === "unauthenticated";
+	useEffect(() => {
+		if (!unauthenticated) return;
+		router.replace(`/auth?returnTo=${encodeURIComponent(pathname)}`);
+	}, [unauthenticated, pathname, router]);
+
+	if (auth.status === "error") {
+		return (
+			<p
+				role="alert"
+				className="mt-8 text-[14px] leading-[1.55] text-white/65"
+			>
+				{auth.message}
+			</p>
+		);
+	}
+
+	if (auth.status !== "authenticated") {
 		return (
 			<p className="mt-8 text-[14px] text-white/45 font-mono uppercase tracking-[0.16em]">
 				Loading…
 			</p>
 		);
-	}
-
-	if (auth.status === "unauthenticated") {
-		return null;
 	}
 
 	async function handleSignOut() {

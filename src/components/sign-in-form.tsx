@@ -102,6 +102,7 @@ export function SignInForm() {
 			onSubmit={form.handleSubmit(onSubmit)}
 			className="mt-10"
 			noValidate
+			aria-busy={isSubmitting}
 		>
 			<label
 				htmlFor="phone"

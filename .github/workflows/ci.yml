@@ -21,9 +21,20 @@ jobs:
 
             - uses: pnpm/action-setup@v6
 
+            - name: Read Node version
+              id: node-version
+              shell: bash
+              run: |
+                  node_version="$(grep -E '^[[:space:]]*node[[:space:]]*=' mise.toml | sed -E 's/^[[:space:]]*node[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/')"
+                  if [[ -z "$node_version" ]]; then
+                    echo "Unable to read node version from mise.toml" >&2
+                    exit 1
+                  fi
+                  echo "version=$node_version" >> "$GITHUB_OUTPUT"
+
             - uses: actions/setup-node@v6
               with:
-                  node-version: 24
+                  node-version: ${{ steps.node-version.outputs.version }}
                   cache: pnpm
 
             - run: pnpm install --frozen-lockfile

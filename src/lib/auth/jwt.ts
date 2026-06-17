@@ -74,6 +74,9 @@ export async function verifyAccessJwt(token: string): Promise<AccessClaims> {
 			issuer: requiredEnv("AUTH_JWT_ISSUER"),
 			audience: requiredEnv("AUTH_JWT_AUDIENCE"),
 			algorithms: [jwtAlgorithm()],
+			// Absorb small issuer/edge clock skew so a just-issued token isn't
+			// spuriously rejected (which would churn 401 -> refresh).
+			clockTolerance: 5,
 		});
 		raw = verified.payload;
 	} catch (cause) {

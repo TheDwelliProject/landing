@@ -1,38 +1,22 @@
 import type { NextRequest } from "next/server";
 
 import { callBackend } from "@/lib/auth/backend";
-import { ACCESS_COOKIE } from "@/lib/auth/cookies";
 import {
-	jsendError,
 	jsendSuccess,
 	mapBackendError,
-	zodErrorToMessage,
+	parseJsonBody,
+	requireAccessToken,
 } from "@/lib/auth/route-utils";
 import { updateMeBodySchema } from "@/lib/auth/schemas";
 
 export const runtime = "nodejs";
 
 export async function PATCH(request: NextRequest) {
-	const token = request.cookies.get(ACCESS_COOKIE)?.value;
-	if (!token) {
-		return jsendError("unauthorized", 401, "Not signed in");
-	}
+	const auth = requireAccessToken(request);
+	if (!auth.ok) return auth.response;
 
-	let raw: unknown;
-	try {
-		raw = await request.json();
-	} catch {
-		return jsendError("invalid_body", 400, "Malformed JSON");
-	}
-
-	const parsed = updateMeBodySchema.safeParse(raw);
-	if (!parsed.success) {
-		return jsendError(
-			"validation_failed",
-			400,
-			zodErrorToMessage(parsed.error),
-		);
-	}
+	const parsed = await parseJsonBody(request, updateMeBodySchema);
+	if (!parsed.ok) return parsed.response;
 
 	try {
 		const data = await callBackend<{
@@ -41,8 +25,8 @@ export async function PATCH(request: NextRequest) {
 			email: string;
 		}>("/v1/me", {
 			method: "PATCH",
-			body: parsed.data,
-			bearer: token,
+			body: parsed.value,
+			bearer: auth.value,
 		});
 		return jsendSuccess({
 			user_id: data.id,

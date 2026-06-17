@@ -1,12 +1,12 @@
 import type { NextRequest } from "next/server";
 
 import { callBackend } from "@/lib/auth/backend";
-import { ACCESS_COOKIE } from "@/lib/auth/cookies";
 import { JwtVerifierUnavailableError, verifyAccessJwt } from "@/lib/auth/jwt";
 import {
 	jsendError,
 	jsendSuccess,
 	mapBackendError,
+	requireAccessToken,
 } from "@/lib/auth/route-utils";
 
 export const runtime = "nodejs";
@@ -17,10 +17,9 @@ type BackendMeResponse = {
 };
 
 export async function GET(request: NextRequest) {
-	const token = request.cookies.get(ACCESS_COOKIE)?.value;
-	if (!token) {
-		return jsendError("unauthorized", 401, "Not signed in");
-	}
+	const auth = requireAccessToken(request);
+	if (!auth.ok) return auth.response;
+	const token = auth.value;
 
 	let claims;
 	try {
@@ -42,11 +41,17 @@ export async function GET(request: NextRequest) {
 			bearer: token,
 		});
 
-		return jsendSuccess({
-			user_id: data.id,
-			superadmin: claims.superadmin ?? false,
-			name: data.name,
-		});
+		// Identity + superadmin status must never be cached by the browser,
+		// bfcache, or any intermediary — a cached copy could be served to a
+		// different session.
+		return jsendSuccess(
+			{
+				user_id: data.id,
+				superadmin: claims.superadmin ?? false,
+				name: data.name,
+			},
+			{ headers: { "Cache-Control": "no-store" } },
+		);
 	} catch (err) {
 		return mapBackendError(err);
 	}

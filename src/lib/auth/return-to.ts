@@ -1,4 +1,4 @@
-const ALLOWED_RETURN_PREFIXES = [
+export const ALLOWED_RETURN_PREFIXES = [
 	"/communities",
 	"/onboarding",
 	"/wizard",

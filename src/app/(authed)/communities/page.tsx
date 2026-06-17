@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { Container } from "@/components/container";
-import { Logo } from "@/components/logo";
+import { AppHeader } from "@/components/app-header";
 import { AdminHomePanel } from "@/components/admin-home-panel";
 import { Metadata } from "next";
 
@@ -11,20 +10,7 @@ export const metadata: Metadata = {
 export default function CommunitiesPage() {
 	return (
 		<div className="min-h-screen bg-charcoal text-white flex flex-col">
-			<Container as="header" className="pt-7">
-				<div className="flex items-center gap-3">
-					<Link href="/" className="flex items-center">
-						<Logo
-							size={22}
-							variant="white-on-orange"
-							wordmarkClassName="text-[18px] text-white"
-						/>
-					</Link>
-					<span className="font-mono uppercase tracking-[0.16em] text-[10px] text-white/45">
-						Communities
-					</span>
-				</div>
-			</Container>
+			<AppHeader eyebrow="Communities" />
 
 			<main className="flex-1 flex items-center">
 				<Container>

@@ -4,7 +4,7 @@ import { ACCESS_COOKIE } from "@/lib/auth/cookie-names";
 import { JwtVerifierUnavailableError, verifyAccessJwt } from "@/lib/auth/jwt";
 import { redirectToSameOrigin } from "@/lib/auth/redirect";
 
-const ADMIN_PREFIXES = [
+export const ADMIN_PREFIXES = [
 	"/communities",
 	"/onboarding",
 	"/wizard",
@@ -12,7 +12,7 @@ const ADMIN_PREFIXES = [
 	"/start-here",
 ];
 
-const SUPERADMIN_PREFIXES = ["/admin"];
+export const SUPERADMIN_PREFIXES = ["/admin"];
 
 type Group = "admin" | "superadmin" | "public";
 

@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { apiFetch } from "@/lib/api";
@@ -22,11 +22,11 @@ export function ProfileForm() {
 		mode: "onChange",
 	});
 
-	const name = useWatch({ control: form.control, name: "name" });
-	const email = useWatch({ control: form.control, name: "email" });
 	const nameError = form.formState.errors.name?.message;
 	const emailError = form.formState.errors.email?.message;
-	const isValid = form.formState.isValid && !!name?.trim() && !!email?.trim();
+	// The zod schema already requires trimmed, non-empty name + email, so the
+	// resolver's `isValid` is sufficient — no need to re-watch both fields.
+	const isValid = form.formState.isValid;
 
 	async function onSubmit(values: ProfileInput) {
 		setSubmitting(true);

@@ -23,6 +23,17 @@ export function RequireAuth({ children, fallback = null }: RequireAuthProps) {
 		router.replace(`/auth?returnTo=${encodeURIComponent(here)}`);
 	}, [auth.status, pathname, router, searchParams]);
 
+	if (auth.status === "error") {
+		return (
+			<p
+				role="alert"
+				className="text-[14px] leading-[1.55] text-white/65"
+			>
+				{auth.message}
+			</p>
+		);
+	}
+
 	if (auth.status !== "authenticated") return <>{fallback}</>;
 	return <>{children}</>;
 }

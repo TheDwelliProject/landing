@@ -241,9 +241,9 @@ export default function Home() {
 									title: "One clear ledger",
 									body: "Every unit, every payment, every open ticket — in one place, always current.",
 								},
-							].map((c, i) => (
+							].map((c) => (
 								<div
-									key={i}
+									key={c.title}
 									className={`${c.bg} text-white rounded-[22px] p-8 min-h-[230px] flex flex-col`}
 								>
 									<div className="w-11 h-11 rounded-[12px] bg-white/22 flex items-center justify-center text-white font-display font-extrabold text-[18px]">

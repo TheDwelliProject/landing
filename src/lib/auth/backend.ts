@@ -2,7 +2,6 @@ import "server-only";
 
 import { env } from "@/lib/env";
 
-export type JSendSuccess<T> = { status: "success"; data: T } | T;
 export type JSendError = {
 	status: "error";
 	code: string;
@@ -32,16 +31,28 @@ export class BackendNetworkError extends Error {
 	}
 }
 
+/** Default ceiling for a single backend round-trip before we give up. */
+const DEFAULT_TIMEOUT_MS = 15_000;
+
 type CallOptions = Omit<RequestInit, "body"> & {
 	body?: unknown;
 	bearer?: string;
+	/** Abort the backend call after this many ms (defaults to 15s). */
+	timeoutMs?: number;
 };
 
 export async function callBackend<T>(
 	path: string,
 	options: CallOptions = {},
 ): Promise<T> {
-	const { body, bearer, headers, ...rest } = options;
+	const {
+		body,
+		bearer,
+		headers,
+		signal,
+		timeoutMs = DEFAULT_TIMEOUT_MS,
+		...rest
+	} = options;
 
 	const finalHeaders = new Headers(headers);
 	finalHeaders.set("Accept", "application/json");
@@ -52,6 +63,14 @@ export async function callBackend<T>(
 		finalHeaders.set("Authorization", `Bearer ${bearer}`);
 	}
 
+	// Never let a hung backend stall the serverless function indefinitely. A
+	// timeout surfaces as a BackendNetworkError (-> 502), same as a connection
+	// failure, whether it happens before headers or while reading the body.
+	const timeoutSignal = AbortSignal.timeout(timeoutMs);
+	const finalSignal = signal
+		? AbortSignal.any([signal, timeoutSignal])
+		: timeoutSignal;
+
 	let response: Response;
 	try {
 		response = await fetch(`${env.DWELLI_API_URL}${path}`, {
@@ -59,12 +78,18 @@ export async function callBackend<T>(
 			headers: finalHeaders,
 			body: body === undefined ? undefined : JSON.stringify(body),
 			cache: "no-store",
+			signal: finalSignal,
 		});
 	} catch (cause) {
 		throw new BackendNetworkError(cause);
 	}
 
-	const text = await response.text();
+	let text: string;
+	try {
+		text = await response.text();
+	} catch (cause) {
+		throw new BackendNetworkError(cause);
+	}
 	const parsed: unknown = text ? safeJsonParse(text) : undefined;
 
 	if (!response.ok) {
@@ -84,12 +109,10 @@ export async function callBackend<T>(
 	}
 
 	if (isJSendError(parsed)) {
-		throw new BackendError(
-			parsed.code,
-			response.status,
-			parsed.message,
-			parsed.data,
-		);
+		// A 2xx response carrying a JSend error envelope is a backend contract
+		// violation. Surface it as a gateway error (502) rather than echoing the
+		// 2xx status, which downstream callers would read as success-ish.
+		throw new BackendError(parsed.code, 502, parsed.message, parsed.data);
 	}
 
 	if (isJSendSuccess(parsed)) {

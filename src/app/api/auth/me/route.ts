@@ -26,6 +26,13 @@ export async function GET(request: NextRequest) {
 		claims = await verifyAccessJwt(token);
 	} catch (err) {
 		if (err instanceof JwtVerifierUnavailableError) {
+			// Mirror the proxy: surface the real reason (missing env var,
+			// invalid/unreachable JWKS) server-side. The message encodes it and
+			// never contains the token.
+			console.error("[bff] auth/me failed: jwt verifier unavailable", {
+				message: err.message,
+				cause: err.cause,
+			});
 			return jsendError(
 				"jwt_verifier_unavailable",
 				503,
@@ -53,6 +60,6 @@ export async function GET(request: NextRequest) {
 			{ headers: { "Cache-Control": "no-store" } },
 		);
 	} catch (err) {
-		return mapBackendError(err);
+		return mapBackendError(err, "auth/me");
 	}
 }

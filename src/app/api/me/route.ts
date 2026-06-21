@@ -34,6 +34,6 @@ export async function PATCH(request: NextRequest) {
 			email: data.email,
 		});
 	} catch (err) {
-		return mapBackendError(err);
+		return mapBackendError(err, "me");
 	}
 }

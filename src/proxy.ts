@@ -46,7 +46,18 @@ export async function proxy(request: NextRequest) {
 	let claims;
 	try {
 		claims = await verifyOrNull(token);
-	} catch {
+	} catch (err) {
+		// verifyOrNull only rethrows JwtVerifierUnavailableError. The browser
+		// just sees a generic 503, so without this the real reason (missing
+		// env var, invalid/unreachable JWKS) is invisible. The message encodes
+		// the reason and never contains the token.
+		console.error(
+			`[proxy] ${pathname} auth check failed: jwt verifier unavailable`,
+			{
+				message: err instanceof Error ? err.message : String(err),
+				cause: err instanceof Error ? err.cause : undefined,
+			},
+		);
 		return new NextResponse("Authentication temporarily unavailable", {
 			status: 503,
 		});

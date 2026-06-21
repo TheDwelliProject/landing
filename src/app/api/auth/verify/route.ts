@@ -38,6 +38,6 @@ export async function POST(request: NextRequest) {
 		setAuthCookies(response, data);
 		return response;
 	} catch (err) {
-		return mapBackendError(err);
+		return mapBackendError(err, "verify");
 	}
 }

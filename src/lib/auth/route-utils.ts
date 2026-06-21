@@ -31,12 +31,23 @@ export function jsendError(
 	);
 }
 
-export function mapBackendError(err: unknown): NextResponse<JSendBody<never>> {
+export function mapBackendError(
+	err: unknown,
+	context?: string,
+): NextResponse<JSendBody<never>> {
 	if (err instanceof BackendError) {
 		// Preserve 4xx codes/messages the client UI keys off, but never echo a
 		// backend 5xx message to the browser — it can leak internals. The code
 		// still passes through; errors.ts maps these to a generic UI string.
 		if (err.status >= 500) {
+			// The browser only sees a generic message, so without this line a
+			// backend 5xx is invisible server-side. Log code/status/message —
+			// never tokens/OTP/phone (those live in request bodies, not here).
+			logServerError(context, "backend 5xx", {
+				code: err.code,
+				status: err.status,
+				message: err.message,
+			});
 			return jsendError(
 				err.code,
 				err.status,
@@ -47,9 +58,28 @@ export function mapBackendError(err: unknown): NextResponse<JSendBody<never>> {
 		return jsendError(err.code, err.status, err.message, err.data);
 	}
 	if (err instanceof BackendNetworkError) {
+		logServerError(context, "backend unreachable", { cause: err.cause });
 		return jsendError("internal_error", 502, "Backend unreachable");
 	}
+	logServerError(context, "unexpected error", { error: err });
 	return jsendError("internal_error", 500, "Unexpected error");
+}
+
+/**
+ * Emit a single structured server-side log line for a failed BFF call. The
+ * browser only ever receives a sanitized JSend error, so this is the only
+ * trail an operator has for diagnosing 5xx/network failures. Keep payloads
+ * free of tokens, OTP codes, and phone numbers (see security invariants).
+ */
+function logServerError(
+	context: string | undefined,
+	reason: string,
+	detail: Record<string, unknown>,
+): void {
+	console.error(
+		`[bff] ${context ?? "backend call"} failed: ${reason}`,
+		detail,
+	);
 }
 
 export function zodErrorToMessage(err: ZodError): string {

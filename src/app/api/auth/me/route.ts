@@ -53,6 +53,6 @@ export async function GET(request: NextRequest) {
 			{ headers: { "Cache-Control": "no-store" } },
 		);
 	} catch (err) {
-		return mapBackendError(err);
+		return mapBackendError(err, "auth/me");
 	}
 }

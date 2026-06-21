@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
 		setAuthCookies(response, data);
 		return response;
 	} catch (err) {
-		const response = mapBackendError(err);
+		const response = mapBackendError(err, "refresh");
 		if (shouldClearAuthCookies(err)) {
 			clearAuthCookies(response);
 		}

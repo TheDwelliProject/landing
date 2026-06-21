@@ -21,6 +21,6 @@ export async function POST(request: NextRequest) {
 		});
 		return jsendSuccess(data ?? {});
 	} catch (err) {
-		return mapBackendError(err);
+		return mapBackendError(err, "request-otp");
 	}
 }

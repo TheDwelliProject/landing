@@ -6,7 +6,7 @@ const TEMPORARY_REDIRECT = 307;
  * Build a redirect to a path on this app's own origin.
  *
  * `path` must be a root-relative absolute path ("/foo?bar"). It is resolved
- * against the request's external origin so the `Location` never points at the
+ * against the app's external origin so the `Location` never points at the
  * internal container host (behind Railway, `request.url`/`nextUrl` can carry
  * the proxied-to address). A relative `Location` is not an option: Next.js
  * middleware normalizes the header through `new URL(location)` and throws on a
@@ -14,7 +14,8 @@ const TEMPORARY_REDIRECT = 307;
  *
  * The path guard rejects absolute, protocol-relative, backslash, and
  * control-character inputs so resolving against the origin can't be steered
- * off-origin into an open redirect.
+ * off-origin into an open redirect. This is defense-in-depth: user-supplied
+ * destinations must still pass `safeReturnTo` before reaching here.
  */
 export function redirectToSameOrigin(
 	request: NextRequest,
@@ -39,17 +40,37 @@ export function redirectToSameOrigin(
 }
 
 /**
- * The externally visible origin of the request. Prefers the `X-Forwarded-*`
- * headers a reverse proxy (Railway) sets, falling back to the request URL for
- * local development where no proxy is in front.
+ * The externally visible origin to resolve redirects against. Prefers the
+ * configured canonical origin (`APP_ORIGIN`), which is the only trustworthy
+ * source in production: `X-Forwarded-*` headers are attacker-controllable
+ * unless the proxy strips them, so trusting them blindly is an open-redirect
+ * vector. Falls back to the forwarded headers, then the request URL, for local
+ * development where `APP_ORIGIN` is unset and no proxy is in front.
+ *
+ * Read lazily from `process.env` (not `@/lib/env`) because this module runs in
+ * the edge proxy, like `jwt.ts`.
  */
 function originOf(request: NextRequest): string {
+	const configured = process.env.APP_ORIGIN;
+	if (configured) {
+		return new URL(configured).origin;
+	}
+
 	const host =
-		request.headers.get("x-forwarded-host") ??
-		request.headers.get("host") ??
+		firstForwardedValue(request.headers.get("x-forwarded-host")) ??
+		firstForwardedValue(request.headers.get("host")) ??
 		request.nextUrl.host;
 	const proto =
-		request.headers.get("x-forwarded-proto") ??
+		firstForwardedValue(request.headers.get("x-forwarded-proto")) ??
 		request.nextUrl.protocol.replace(/:$/, "");
 	return `${proto}://${host}`;
+}
+
+/**
+ * `X-Forwarded-*` headers can carry a comma-separated chain
+ * ("client, proxy1, proxy2"); the first value is the externally visible one.
+ */
+function firstForwardedValue(value: string | null): string | undefined {
+	const first = value?.split(",")[0]?.trim();
+	return first || undefined;
 }

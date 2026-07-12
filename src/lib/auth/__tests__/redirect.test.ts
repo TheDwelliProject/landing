@@ -1,9 +1,47 @@
 import { NextRequest } from "next/server";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 
 import { redirectToSameOrigin } from "@/lib/auth/redirect";
 
 describe("redirectToSameOrigin", () => {
+	afterEach(() => {
+		delete process.env.APP_ORIGIN;
+	});
+
+	it("prefers the configured APP_ORIGIN over forwarded headers", () => {
+		process.env.APP_ORIGIN = "https://app.dwelli.com";
+
+		const response = redirectToSameOrigin(
+			new NextRequest("http://0.0.0.0:8080/communities/create", {
+				headers: {
+					"x-forwarded-host": "evil.com",
+					"x-forwarded-proto": "https",
+				},
+			}),
+			"/communities",
+		);
+
+		expect(response.headers.get("Location")).toBe(
+			"https://app.dwelli.com/communities",
+		);
+	});
+
+	it("uses the first value from a comma-separated forwarded chain", () => {
+		const response = redirectToSameOrigin(
+			new NextRequest("http://0.0.0.0:8080/communities/create", {
+				headers: {
+					"x-forwarded-host": "app.dwelli.com, internal.proxy",
+					"x-forwarded-proto": "https, http",
+				},
+			}),
+			"/communities",
+		);
+
+		expect(response.headers.get("Location")).toBe(
+			"https://app.dwelli.com/communities",
+		);
+	});
+
 	it("resolves the path against the request origin", () => {
 		const response = redirectToSameOrigin(
 			new NextRequest("https://app.dwelli.com/communities/create"),

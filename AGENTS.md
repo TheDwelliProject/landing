@@ -91,6 +91,7 @@ Server-side only; create `.env.local` for development.
 | Variable             | Required | Purpose                                       |
 | -------------------- | -------- | --------------------------------------------- |
 | `DWELLI_API_URL`     | yes      | Backend base URL the BFF proxies to           |
+| `APP_ORIGIN`         | no       | Canonical external origin (e.g. `https://app.dwelli.com`) auth redirects resolve against; prevents the internal container host leaking behind Railway and ignores spoofable `X-Forwarded-*`. Unset in dev falls back to forwarded headers/request URL |
 | `AUTH_JWKS_URL`      | yes      | JWKS endpoint for access-JWT verification     |
 | `AUTH_JWT_ISSUER`    | yes      | Expected `iss` claim                          |
 | `AUTH_JWT_AUDIENCE`  | yes      | Expected `aud` claim                          |

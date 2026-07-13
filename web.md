@@ -38,12 +38,18 @@
 
 ### Community Creation Wizard — Screen 2: Units
 
-- [ ] Build unit entry form: label, count (number of identical units)
-- [ ] Display summary of units added so far
-- [ ] Add/edit/remove individual units
-- [ ] Behind-the-scenes: resolve `communities.default_property_id` and link units to it
-- [ ] Call backend `POST /v1/properties/:id/units` for each unit (or batch)
-- [ ] Add "continue" button; store progress
+- [x] Build unit entry form: label, count (number of identical units)
+    - Evidence: `src/components/community-units-step.tsx` (react-hook-form + `addUnitsFormSchema`); count > 1 auto-numbers labels via `src/lib/units/numbering.ts` ("Flat" × 3 → "Flat 1"–"Flat 3", continuing past existing numbers)
+- [x] Display summary of units added so far
+    - Evidence: "Units (N)" list in `community-units-step.tsx`; server is the source of truth — list fetched on mount via `GET /api/properties/:id/units`, never mirrored in localStorage
+- [x] Add/edit/remove individual units
+    - Evidence: immediate sync via BFF routes `src/app/api/properties/[id]/units/route.ts` (GET/POST) and `.../[unitId]/route.ts` (PATCH/DELETE); inline row edit + remove with 409 handling (`unit_label_taken`, `unit_in_use`) in `src/lib/auth/errors.ts`
+- [x] Behind-the-scenes: resolve `communities.default_property_id` and link units to it
+    - Evidence: create response passthrough in `src/app/api/communities/route.ts` stored as `WizardProgress.defaultPropertyId`; resume fallback `GET /api/communities/:id` (`src/app/api/communities/[id]/route.ts`) for older drafts
+- [x] Call backend `POST /v1/properties/:id/units` for each unit (or batch)
+    - Evidence: batch create — one POST per "Add" click with `{labels}` (backend accepts 1–20 labels, all-or-nothing); UI enforces 20-unit-per-property capacity
+- [x] Add "continue" button; store progress
+    - Evidence: `community-wizard.tsx` `handleUnitsContinue` persists `step: 2` (Ownership placeholder); Continue gated on ≥1 unit
 
 ### Community Creation Wizard — Screen 3: Ownership & Properties
 

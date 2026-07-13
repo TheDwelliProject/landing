@@ -4,19 +4,19 @@ import { callBackend } from "@/lib/auth/backend";
 import {
 	jsendSuccess,
 	mapBackendError,
-	parseJsonBody,
 	requireAccessToken,
 } from "@/lib/auth/route-utils";
-import { createCommunityBodySchema } from "@/lib/communities/schemas";
 
 export const runtime = "nodejs";
 
-export async function POST(request: NextRequest) {
+export async function GET(
+	request: NextRequest,
+	{ params }: { params: Promise<{ id: string }> },
+) {
 	const auth = requireAccessToken(request);
 	if (!auth.ok) return auth.response;
 
-	const parsed = await parseJsonBody(request, createCommunityBodySchema);
-	if (!parsed.ok) return parsed.response;
+	const { id } = await params;
 
 	try {
 		const data = await callBackend<{
@@ -24,9 +24,7 @@ export async function POST(request: NextRequest) {
 			name: string;
 			status: string;
 			default_property_id: string;
-		}>("/v1/communities", {
-			method: "POST",
-			body: parsed.value,
+		}>(`/v1/communities/${encodeURIComponent(id)}`, {
 			bearer: auth.value,
 		});
 		return jsendSuccess({
@@ -36,6 +34,6 @@ export async function POST(request: NextRequest) {
 			default_property_id: data.default_property_id ?? null,
 		});
 	} catch (err) {
-		return mapBackendError(err, "communities");
+		return mapBackendError(err, "communities/:id");
 	}
 }

@@ -22,6 +22,10 @@ export type WizardProgress = {
 	version: 1; // bump to invalidate stale persisted shapes
 	step: number; // 0-based index into WIZARD_STEPS
 	communityId: string | null; // set once POST /api/communities succeeds
+	// Property the Units step attaches units to; resolved from the create
+	// response (or refetched on resume). Additive to version 1 — older drafts
+	// without it still load and are normalized to null.
+	defaultPropertyId: string | null;
 	basics: CreateCommunityBody | null;
 };
 
@@ -32,6 +36,9 @@ function isWizardProgress(value: unknown): value is WizardProgress {
 		v.version === 1 &&
 		typeof v.step === "number" &&
 		(v.communityId === null || typeof v.communityId === "string") &&
+		(v.defaultPropertyId === null ||
+			v.defaultPropertyId === undefined ||
+			typeof v.defaultPropertyId === "string") &&
 		(v.basics === null || typeof v.basics === "object")
 	);
 }
@@ -42,7 +49,11 @@ export function loadWizardProgress(): WizardProgress | null {
 		const raw = window.localStorage.getItem(WIZARD_PROGRESS_KEY);
 		if (!raw) return null;
 		const parsed: unknown = JSON.parse(raw);
-		return isWizardProgress(parsed) ? parsed : null;
+		if (!isWizardProgress(parsed)) return null;
+		return {
+			...parsed,
+			defaultPropertyId: parsed.defaultPropertyId ?? null,
+		};
 	} catch {
 		return null;
 	}

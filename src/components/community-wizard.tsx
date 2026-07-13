@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { CommunityBasicsForm } from "@/components/community-basics-form";
+import { CommunityUnitsStep } from "@/components/community-units-step";
 import { WizardStepper } from "@/components/wizard-stepper";
 import type { CreateCommunityBody } from "@/lib/communities/schemas";
 import {
@@ -16,6 +17,7 @@ const INITIAL_PROGRESS: WizardProgress = {
 	version: 1,
 	step: 0,
 	communityId: null,
+	defaultPropertyId: null,
 	basics: null,
 };
 
@@ -30,10 +32,16 @@ export function CommunityWizard() {
 		// markup — only hydrate after mount, and in a single setState call so
 		// there's no intermediate "hydrated but stale progress" render.
 		const saved = loadWizardProgress();
+		// A draft past step 0 without a community id can't render any later
+		// screen — clamp back to Basics rather than crash.
+		const progress =
+			saved && saved.step > 0 && !saved.communityId
+				? { ...saved, step: 0 }
+				: saved;
 		// localStorage is client-only, so this state is intentionally populated
 		// after hydration rather than during render.
 		// eslint-disable-next-line react-hooks/set-state-in-effect
-		setState({ hydrated: true, progress: saved ?? INITIAL_PROGRESS });
+		setState({ hydrated: true, progress: progress ?? INITIAL_PROGRESS });
 	}, []);
 
 	const { hydrated, progress } = state;
@@ -43,11 +51,16 @@ export function CommunityWizard() {
 
 	if (!hydrated) return null;
 
-	function handleCreated(communityId: string, values: CreateCommunityBody) {
+	function handleCreated(
+		communityId: string,
+		defaultPropertyId: string | null,
+		values: CreateCommunityBody,
+	) {
 		const next: WizardProgress = {
 			version: 1,
 			step: 1,
 			communityId,
+			defaultPropertyId,
 			basics: values,
 		};
 		saveWizardProgress(next);
@@ -56,6 +69,21 @@ export function CommunityWizard() {
 
 	function handleResumeContinue() {
 		const next: WizardProgress = { ...progress, step: 1 };
+		saveWizardProgress(next);
+		setProgress(next);
+	}
+
+	function handlePropertyResolved(propertyId: string) {
+		const next: WizardProgress = {
+			...progress,
+			defaultPropertyId: propertyId,
+		};
+		saveWizardProgress(next);
+		setProgress(next);
+	}
+
+	function handleUnitsContinue() {
+		const next: WizardProgress = { ...progress, step: 2 };
 		saveWizardProgress(next);
 		setProgress(next);
 	}
@@ -86,13 +114,22 @@ export function CommunityWizard() {
 				/>
 			) : null}
 
-			{progress.step >= 1 ? (
+			{progress.step === 1 && progress.communityId ? (
+				<CommunityUnitsStep
+					communityId={progress.communityId}
+					defaultPropertyId={progress.defaultPropertyId}
+					onPropertyResolved={handlePropertyResolved}
+					onContinue={handleUnitsContinue}
+				/>
+			) : null}
+
+			{progress.step >= 2 ? (
 				<div className="mt-10">
 					<h2 className="font-display font-extrabold tracking-[-0.04em] text-[24px]">
-						Units
+						Ownership
 					</h2>
 					<p className="mt-3 text-[14px] leading-[1.55] text-charcoal/65">
-						Unit setup lands here in the next stage.
+						Ownership setup lands here in the next stage.
 					</p>
 				</div>
 			) : null}

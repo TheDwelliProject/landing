@@ -12,6 +12,7 @@ const SAMPLE: WizardProgress = {
 	version: 1,
 	step: 1,
 	communityId: "c-1",
+	defaultPropertyId: "p-1",
 	basics: {
 		name: "Harmony Estate",
 		contact_email: "admin@example.com",
@@ -50,5 +51,23 @@ describe("wizard progress storage", () => {
 		saveWizardProgress(SAMPLE);
 		clearWizardProgress();
 		expect(loadWizardProgress()).toBeNull();
+	});
+
+	it("normalizes a legacy draft missing defaultPropertyId to null", () => {
+		const legacy = {
+			version: 1,
+			step: 1,
+			communityId: "c-1",
+			basics: {
+				name: "Harmony Estate",
+				contact_email: "admin@example.com",
+				contact_phone: "+2348012345678",
+			},
+		};
+		localStorage.setItem(WIZARD_PROGRESS_KEY, JSON.stringify(legacy));
+		expect(loadWizardProgress()).toEqual({
+			...legacy,
+			defaultPropertyId: null,
+		});
 	});
 });

@@ -16,7 +16,11 @@ export function CommunityBasicsForm({
 	onCreated,
 }: {
 	defaultValues?: Partial<CreateCommunityBody>;
-	onCreated: (communityId: string, values: CreateCommunityBody) => void;
+	onCreated: (
+		communityId: string,
+		defaultPropertyId: string | null,
+		values: CreateCommunityBody,
+	) => void;
 }) {
 	const [submitting, setSubmitting] = useState(false);
 
@@ -42,6 +46,7 @@ export function CommunityBasicsForm({
 			const res = await apiFetch<{
 				community_id: string;
 				status: string;
+				default_property_id: string | null;
 			}>("/api/communities", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
@@ -51,7 +56,11 @@ export function CommunityBasicsForm({
 					contact_phone: values.contact_phone.trim(),
 				}),
 			});
-			onCreated(res.community_id, values);
+			onCreated(
+				res.community_id,
+				res.default_property_id ?? null,
+				values,
+			);
 		} catch (err) {
 			applyError(err, {
 				setError: form.setError,

@@ -23,6 +23,9 @@ const MSG_RATE =
 const MSG_INVALID_PHONE = "Please enter a valid mobile number";
 const MSG_INVALID_OTP =
 	"Code incorrect or expired. Try again or request a new code.";
+const MSG_UNIT_LABEL_TAKEN_FALLBACK = "That label is already taken";
+const MSG_COMMUNITY_NOT_MUTABLE = "This community can't be changed right now.";
+const MSG_UNIT_IN_USE = "This unit is in use and can't be removed.";
 
 /** Maps a thrown error to a UI behavior, per spec §Error mapping reference. */
 export function mapError(
@@ -41,6 +44,16 @@ export function mapError(
 			return inlineOrToast(fieldMap["invalid_phone"], MSG_INVALID_PHONE);
 		case "invalid_otp":
 			return inlineOrToast(fieldMap["invalid_otp"], MSG_INVALID_OTP);
+		case "unit_label_taken":
+			return inlineOrToast(
+				fieldMap["unit_label_taken"],
+				unitLabelTakenMessage(err.data),
+			);
+		case "community_not_mutable":
+			return { kind: "toast", message: MSG_COMMUNITY_NOT_MUTABLE };
+		case "unit_has_active_tenancy":
+		case "unit_in_use":
+			return { kind: "toast", message: MSG_UNIT_IN_USE };
 		case "validation_failed": {
 			const firstField = Object.values(fieldMap).find(Boolean);
 			const msg = err.message || "Please check your input.";
@@ -76,6 +89,17 @@ function rateLimitMessage(retryAfterSeconds: number | undefined): string {
 	}
 	const minutes = Math.ceil(retryAfterSeconds / 60);
 	return `Too many requests. Try again in ${minutes} minute${minutes === 1 ? "" : "s"}.`;
+}
+
+/** Narrows the backend's `{label: string}` conflict payload, if present. */
+function unitLabelTakenMessage(data: unknown): string {
+	if (typeof data !== "object" || data === null) {
+		return MSG_UNIT_LABEL_TAKEN_FALLBACK;
+	}
+	const label = (data as { label?: unknown }).label;
+	return typeof label === "string"
+		? `"${label}" is already taken`
+		: MSG_UNIT_LABEL_TAKEN_FALLBACK;
 }
 
 function inlineOrToast(

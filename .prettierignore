@@ -18,6 +18,7 @@ public
 # Design / docs / mocks
 mocks
 plans
+*.md
 
 # Tooling state
 .claude

@@ -35,6 +35,7 @@ export function mapError(
 	if (!(err instanceof ApiError)) {
 		return { kind: "toast", message: MSG_INTERNAL };
 	}
+	const mappedField = fieldMap[err.code];
 	switch (err.code) {
 		case "invalid_phone":
 			return inlineOrToast(fieldMap["invalid_phone"], MSG_INVALID_PHONE);
@@ -58,6 +59,12 @@ export function mapError(
 		case "refresh_token_expired":
 			return { kind: "force-logout", reason: "session-expired" };
 		default:
+			if (mappedField) {
+				return inlineOrToast(
+					mappedField,
+					err.message || "Please check your input.",
+				);
+			}
 			return { kind: "toast", message: MSG_INTERNAL };
 	}
 }

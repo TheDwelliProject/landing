@@ -23,12 +23,18 @@
 
 ### Community Creation Wizard — Screen 1: Basic Info
 
-- [ ] Build wizard container/stepper component to track progress
-- [ ] Create form for: Community name, intended resident count (size), optional context
-- [ ] Add validation (name required, size is positive integer)
-- [ ] Wire form submission to backend `POST /v1/communities` (creates in draft status)
-- [ ] Store wizard progress in component state or local storage for mid-flow recovery
-- [ ] Add "continue" button to move to screen 2
+- [x] Build wizard container/stepper component to track progress
+    - Evidence: `src/components/community-wizard.tsx` (container) and `src/components/wizard-stepper.tsx` (stepper)
+- [x] Create form for: Community name, contact email, contact phone (contract: POST /v1/communities requires all three; size/context dropped — not in backend)
+    - Evidence: `src/components/community-basics-form.tsx`; wire schema `src/lib/communities/schemas.ts`
+- [x] Add validation (name required max 255, email format, E.164 phone)
+    - Evidence: `src/lib/communities/schemas.ts` `createCommunityBodySchema` — shared by the form and the BFF route
+- [x] Wire form submission to backend `POST /v1/communities` (creates in draft status)
+    - Evidence: `src/app/api/communities/route.ts` calls `callBackend("/v1/communities", ...)`
+- [x] Store wizard progress in component state or local storage for mid-flow recovery
+    - Evidence: `src/lib/wizard/storage.ts` persists `WizardProgress` to localStorage; loaded on mount in `community-wizard.tsx`
+- [x] Add "continue" button to move to screen 2
+    - Evidence: `src/components/community-basics-form.tsx` submit button; `src/components/community-wizard.tsx` advances `step` to 1 on success
 
 ### Community Creation Wizard — Screen 2: Units
 

@@ -27,9 +27,6 @@ export const createCommunityBodySchema = z.object({
 		.trim()
 		.email("Please enter a valid email address")
 		.max(254, "That email looks a little long"),
-	contact_phone: z
-		.string()
-		.trim()
-		.transform(normalizeContactPhone),
+	contact_phone: z.string().trim().transform(normalizeContactPhone),
 });
 export type CreateCommunityBody = z.infer<typeof createCommunityBodySchema>;
